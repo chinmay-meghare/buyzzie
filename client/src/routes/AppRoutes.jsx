@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Home from "../pages/Home";
 import ProductList from "../pages/ProductList";
-import ProductDetail from "../pages/ProductDetail";
+import ProductDetail from "../pages/ProductDetails";
 import Cart from "../pages/Cart";
 import Profile from "../pages/Profile";
 import Login from "../pages/Login";
@@ -20,7 +20,7 @@ const AppRoutes = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/login" element={<Login />} />
       <Route path="/logout" element={<Logout />} />
-      <Route path="/admin" element={user.role === "admin" ? <AdminPanel /> : <Navigate to="/login" />} />
+      {/* <Route path="/admin" element={user.role === "admin" ? <AdminPanel /> : <Navigate to="/login" />} /> */}
     </Routes>
   );
 };
