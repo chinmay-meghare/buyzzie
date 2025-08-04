@@ -3,6 +3,7 @@ import Hero from "../components/layout/Hero";
 import Navbar from "../components/layout/Navbar";
 import PromotionBanner from "../components/layout/PromotionBanner";
 import CategoryPreview from "../components/layout/CategoryPreview";
+import ProductGrid from "../components/layout/ProductGrid";
 
 function Home() {
   return (
@@ -11,6 +12,7 @@ function Home() {
       <Hero />
       <PromotionBanner />
       <CategoryPreview /> 
+      <ProductGrid/>
     </div>
   );
 }
