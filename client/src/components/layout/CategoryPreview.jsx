@@ -32,8 +32,10 @@ const CategoryPreview = () => {
   return (
     <section className="w-full bg-[#10318] py-16 px-4">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
-        <h2 className="text-4xl md:text-6xl font-bold text-white text-center mb-4">
-          Shop by Category
+        <h2 className="text-4xl md:text-6xl font-bold text-center mb-4">
+           <span className="bg-gradient-to-r from-[#ebebeb] to-[#9379fc] bg-clip-text text-transparent">
+            Shop by Category
+          </span>
         </h2>
         <p className="text-lg md:text-xl text-gray-400 text-center mb-12">
           Explore our carefully curated collections designed for the modern lifestyle

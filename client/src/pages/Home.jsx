@@ -4,6 +4,8 @@ import Navbar from "../components/layout/Navbar";
 import PromotionBanner from "../components/layout/PromotionBanner";
 import CategoryPreview from "../components/layout/CategoryPreview";
 import ProductGrid from "../components/layout/ProductGrid";
+import SubscribeSection from "../components/layout/SubscribeSection";
+import Footer from "../components/layout/Footer";
 
 function Home() {
   return (
@@ -13,6 +15,8 @@ function Home() {
       <PromotionBanner />
       <CategoryPreview /> 
       <ProductGrid/>
+      <SubscribeSection/>
+      <Footer/>
     </div>
   );
 }

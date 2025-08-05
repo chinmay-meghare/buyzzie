@@ -1,12 +1,13 @@
-import React from "react";
-import AppRoutes from "./routes/AppRoutes";
+import React from 'react'
+import Home from './pages/Home'
+
 
 function App() {
   return (
-    <div className="sm:px-[5vw] md:px-[7vw] lg:px-[6vw] min-h-screen bg-[#1a1036]">
-      <AppRoutes />
+    <div className='sm:px-[5vw] md:px-[7vw] lg:px-[6vw]'>
+      <Home/>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App  
