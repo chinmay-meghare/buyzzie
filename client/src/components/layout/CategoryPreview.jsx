@@ -1,30 +1,31 @@
 import React from "react";
+import { assets } from "../../assets/assets";
 
 const categories = [
   {
     name: "Clothes",
     items: 8,
-    img: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
+    img: assets.product_clothes,
   },
   {
     name: "Electronics",
     items: 12,
-    img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80",
+    img: assets.product_laptop,
   },
   {
     name: "Shoes",
     items: 6,
-    img: "https://images.unsplash.com/photo-1669671943625-e20799ee5f42?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    img: assets.product_shoes,
   },
   {
     name: "Furniture",
     items: 7,
-    img: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80",
+    img: assets.product_chair,
   },
   {
     name: "Miscellaneous",
     items: 9,
-    img: "https://images.unsplash.com/photo-1620802051782-725fa33db067?q=80&w=869&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    img: assets.product_misc,
   },
 ];
 
@@ -33,12 +34,13 @@ const CategoryPreview = () => {
     <section className="w-full bg-[#10318] py-16 px-4">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         <h2 className="text-4xl md:text-6xl font-bold text-center mb-4">
-           <span className="bg-gradient-to-r from-[#ebebeb] to-[#9379fc] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#ebebeb] to-[#9379fc] bg-clip-text text-transparent">
             Shop by Category
           </span>
         </h2>
         <p className="text-lg md:text-xl text-gray-400 text-center mb-12">
-          Explore our carefully curated collections designed for the modern lifestyle
+          Explore our carefully curated collections designed for the modern
+          lifestyle
         </p>
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
           {categories.map((cat) => (
@@ -59,7 +61,9 @@ const CategoryPreview = () => {
               {/* Content with scale on hover */}
               <div className="flex flex-col flex-1 justify-between p-6 transition-transform duration-300 group-hover:scale-105">
                 <div>
-                  <h3 className="text-2xl font-semibold text-white mb-1">{cat.name}</h3>
+                  <h3 className="text-2xl font-semibold text-white mb-1">
+                    {cat.name}
+                  </h3>
                   <p className="text-gray-400 mb-6">{cat.items} Items</p>
                 </div>
                 <button className="w-full py-2 rounded-lg border border-[#23262b] text-white font-semibold transition-colors duration-200 hover:bg-[#23204a]">
