@@ -3,7 +3,7 @@ import Hero from "../components/layout/Hero";
 import Navbar from "../components/common/Navbar";
 import PromotionBanner from "../components/layout/PromotionBanner";
 import CategoryPreview from "../components/layout/CategoryPreview";
-import ProductGrid from "../components/layout/ProductGrid";
+import FeaturedProducts from "../components/layout/FeaturedProducts";
 import SubscribeSection from "../components/layout/SubscribeSection";
 import Footer from "../components/common/Footer";
 
@@ -14,7 +14,7 @@ function Home() {
       <Hero />
       <PromotionBanner />
       <CategoryPreview /> 
-      <ProductGrid/>
+      <FeaturedProducts/>
       <SubscribeSection/>
       <Footer/>
     </div>

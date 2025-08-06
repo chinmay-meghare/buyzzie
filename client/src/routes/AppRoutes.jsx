@@ -2,7 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import Home from "../pages/Home";
-import ProductList from "../pages/ProductList";
+import Collection from "../pages/Collection";
 import ProductDetail from "../pages/ProductDetails";
 import Cart from "../pages/Cart";
 import Profile from "../pages/Profile";
@@ -15,12 +15,13 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/products" element={<ProductList />} />
+      <Route path="/collection" element={<Collection />} />
       <Route path="/product/:productId" element={<ProductDetail />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/login" element={<Login />} />
       <Route path="/logout" element={<Logout />} />
+      <Route path="*" element={<NotFound />} />
       {/* <Route path="/admin" element={user.role === "admin" ? <AdminPanel /> : <Navigate to="/login" />} /> */}
     </Routes>
   );

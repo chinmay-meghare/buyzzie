@@ -14,11 +14,11 @@ const PromotionBanner = () => {
         <p className="text-lg md:text-xl text-gray-300">
           Limited edition drops. Get them before they're gone.
         </p>
-      
-        <Link to="/products">
-        <button  className="w-fit px-8 py-4 bg-white text-black rounded-full text-lg font-medium shadow hover:bg-gray-100 transition">
-          View Collection
-        </button>
+
+        <Link to="/collection">
+          <button className="w-fit px-8 py-4 bg-white text-black rounded-full text-lg font-medium shadow hover:bg-gray-100 transition">
+            View Collection
+          </button>
         </Link>
       </div>
     </section>

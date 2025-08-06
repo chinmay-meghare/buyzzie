@@ -1,4 +1,4 @@
-const ProductGrid = () => {
+const FeaturedProducts = () => {
   const products = [
     {
       id: 1,
@@ -100,4 +100,4 @@ const ProductGrid = () => {
   );
 };
 
-export default ProductGrid;
+export default FeaturedProducts;
