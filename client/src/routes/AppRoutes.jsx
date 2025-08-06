@@ -8,6 +8,7 @@ import Cart from "../pages/Cart";
 import Profile from "../pages/Profile";
 import Login from "../pages/Login";
 import Logout from "../pages/Logout";
+import NotFound from "../pages/NotFound";
 import AdminPanel from "../pages/AdminPanel";
 
 const AppRoutes = () => {
