@@ -4,8 +4,11 @@ function Navbar() {
   return (
     <nav className="w-full flex items-center justify-between px-12 py-4 bg-[#1d0c3f] ">
       <div className="text-3xl font-bold tracking-wide">
-        <span className="text-cyan-400">Buy</span>
-        <span className="text-purple-200">zzie</span>
+        <h1 className="text-5xl md:text-3xl font-black leading-tight mb-2">
+          <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-400 bg-clip-text text-transparent">
+            Buyzzie
+          </span>
+        </h1>
       </div>
       <ul className="flex gap-8 text-lg font-medium text-white/90">
         <li className="hover:text-cyan-300 cursor-pointer">Home</li>
@@ -23,7 +26,9 @@ function Navbar() {
         </span>
         <span className="relative cursor-pointer">
           <i className="fa fa-shopping-cart" />
-          <span className="absolute -top-2 -right-2 bg-pink-400 text-xs text-white rounded-full px-2 py-0.5 font-bold">3</span>
+          <span className="absolute -top-2 -right-2 bg-pink-400 text-xs text-white rounded-full px-2 py-0.5 font-bold">
+            3
+          </span>
         </span>
       </div>
     </nav>
