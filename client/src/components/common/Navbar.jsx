@@ -1,18 +1,29 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
     <nav className="w-full flex items-center justify-between px-12 py-4 bg-[#1d0c3f] ">
       <div className="text-3xl font-bold tracking-wide">
-        <h1 className="text-5xl md:text-3xl font-black leading-tight mb-2">
-          <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-400 bg-clip-text text-transparent">
-            Buyzzie
-          </span>
-        </h1>
+        <Link to="/">
+          <h1 className="text-5xl md:text-3xl font-black leading-tight mb-2">
+            <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-400 bg-clip-text text-transparent">
+              Buyzzie
+            </span>
+          </h1>
+        </Link>
       </div>
       <ul className="flex gap-8 text-lg font-medium text-white/90">
-        <li className="hover:text-cyan-300 cursor-pointer">Home</li>
-        <li className="hover:text-cyan-300 cursor-pointer">Shop</li>
+        <li className="hover:text-cyan-300 cursor-pointer">
+          <Link to="/" className="hover:text-cyan-300">
+            Home
+          </Link>
+        </li>
+        <li className="hover:text-cyan-300 cursor-pointer">
+          <Link to="/collection" className="hover:text-cyan-300">
+            Shop
+          </Link>
+        </li>
         <li className="hover:text-cyan-300 cursor-pointer">Categories</li>
         <li className="hover:text-cyan-300 cursor-pointer">New Arrivals</li>
         <li className="hover:text-cyan-300 cursor-pointer">About</li>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { assets } from "../../assets/assets";
 
 const categories = [
@@ -66,9 +67,11 @@ const CategoryPreview = () => {
                   </h3>
                   <p className="text-gray-400 mb-6">{cat.items} Items</p>
                 </div>
-                <button className="w-full py-2 rounded-lg border border-[#23262b] text-white font-semibold transition-colors duration-200 hover:bg-[#23204a]">
-                  Explore
-                </button>
+                <Link to="/collection">
+                  <button className="w-full py-2 rounded-lg border border-[#23262b] text-white font-semibold transition-colors duration-200 hover:bg-[#23204a]">
+                    Explore
+                  </button>
+                </Link>
               </div>
               {/* Animated border (for smoothness) */}
               <span className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-violet-500 transition-all duration-300 z-10"></span>

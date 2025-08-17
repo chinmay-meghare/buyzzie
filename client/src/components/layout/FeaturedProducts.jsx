@@ -1,3 +1,6 @@
+import React from "react";
+import { Link } from "react-router-dom";
+
 const FeaturedProducts = () => {
   const products = [
     {
@@ -62,6 +65,11 @@ const FeaturedProducts = () => {
           <p className="text-lg md:text-xl text-gray-400 text-center mb-12">
             Handpicked items that define the future of style and technology
           </p>
+          <Link to="/collection">
+            <button className="bg-gradient-to-r from-violet-500 to-pink-500 text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg hover:scale-105 transition-transform mb-12">
+              View All Products
+            </button>
+          </Link>
         </div>
         <div className="grid gap-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
@@ -76,9 +84,11 @@ const FeaturedProducts = () => {
                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-                  <button className="bg-violet-600 text-white px-4 py-2 rounded-md font-medium hover:bg-violet-700">
-                    Quick View
-                  </button>
+                  <Link to="/collection">
+                    <button className="bg-violet-600 text-white px-4 py-2 rounded-md font-medium hover:bg-violet-700">
+                      Quick View
+                    </button>
+                  </Link>
                 </div>
               </div>
               <div className="p-6">
