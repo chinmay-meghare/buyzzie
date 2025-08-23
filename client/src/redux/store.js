@@ -20,4 +20,3 @@ export const store = configureStore({
       },
     }),
 });
-

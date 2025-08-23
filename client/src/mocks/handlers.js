@@ -129,10 +129,13 @@ export const handlers = [
 
   // GET /api/products/:id - Get single product
   http.get("/api/products/:id", ({ params }) => {
-    const product = productsData.find((p) => p.id === parseInt(params.id));
+    const productId = parseInt(params.id, 10);
+
+    const product = productsData.find((p) => p.id === productId);
+    console.log("MSW returning product:", product);
 
     if (!product) {
-      return new HttpResponse(null, { status: 404 });
+      return new HttpResponse("Product not found", { status: 404 });
     }
 
     return HttpResponse.json(product);

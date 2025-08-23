@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
-  return (
+  return (        
     <div className="bg-gray-900 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <Link to={`/product/${product.id}`}>
         <div className="relative">
@@ -28,9 +28,9 @@ const ProductCard = ({ product }) => {
           </h3>
         </Link>
 
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+        {/* <p className="text-sm text-gray-600 mb-3 line-clamp-2">
           {product.description}
-        </p>
+        </p> */}
 
         <div className="flex items-center justify-between mb-3">
           <span className="text-xl font-bold text-green-600">
@@ -39,12 +39,12 @@ const ProductCard = ({ product }) => {
           <span className="text-sm text-gray-500">{product.currency}</span>
         </div>
 
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+        {/* <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
           <span>Stock: {product.stock}</span>
           <span className="capitalize">{product.category.name}</span>
-        </div>
+        </div> */}
 
-        {product.colors.length > 0 && (
+        {/* {product.colors.length > 0 && (
           <div className="mb-3">
             <span className="text-sm text-gray-90">Colors: </span>
             <div className="flex gap-1 mt-1">
@@ -63,9 +63,9 @@ const ProductCard = ({ product }) => {
               )}
             </div>
           </div>
-        )}
+        )} */}
 
-        {product.sizes.length > 0 && (
+        {/* {product.sizes.length > 0 && (
           <div className="mb-3">
             <span className="text-sm text-gray-90">Sizes: </span>
             <div className="flex gap-1 mt-1">
@@ -79,7 +79,7 @@ const ProductCard = ({ product }) => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
           Add to Cart

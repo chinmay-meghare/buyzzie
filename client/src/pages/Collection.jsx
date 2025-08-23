@@ -9,9 +9,8 @@ import Footer from "../components/common/Footer";
 
 function Collection() {
   const dispatch = useDispatch();
-  const { products, meta, filters, loading, error, isInitialLoad } = useSelector(
-    (state) => state.products
-  );
+  const { products, meta, filters, loading, error, isInitialLoad } =
+    useSelector((state) => state.products);
 
   useEffect(() => {
     // Fetch both categories and products on initial mount
