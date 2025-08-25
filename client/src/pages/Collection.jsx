@@ -4,8 +4,6 @@ import { fetchProducts, fetchCategories } from "../products/productSlice";
 import ProductFilters from "../components/collection/ProductFilters";
 import ProductCard from "../components/collection/ProductCard";
 import Pagination from "../components/collection/Pagination";
-import Navbar from "../components/common/Navbar";
-import Footer from "../components/common/Footer";
 
 function Collection() {
   const dispatch = useDispatch();
@@ -29,7 +27,6 @@ function Collection() {
   if (loading && (!products || products.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-800">
-        <Navbar />
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-100 mb-6">
@@ -40,7 +37,6 @@ function Collection() {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -75,7 +71,6 @@ function Collection() {
 
   return (
     <div className="min-h-screen bg-black">
-      <Navbar />
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-50 mb-6">
@@ -117,7 +112,6 @@ function Collection() {
           <Pagination />
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductById } from "../products/productSlice";
+import { fetchProductById } from "../redux/productSlice";
 
 const ProductDetails = () => {
   const { productId: productIdStr } = useParams();
