@@ -1,6 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { productService } from "./productService";
 
+export const fetchProductById = createAsyncThunk(
+  "products/fetchProductById",
+  async (productId, { rejectWithValue }) => {
+    try {
+      // productService.getProduct returns response.data (MSW returns product object)
+      const response = await productService.getProduct(productId);
+      return response; // should be the product object
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data || error?.message || "Failed to fetch product"
+      );
+    }
+  }
+);
+
 // Async thunks
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
@@ -86,6 +101,20 @@ const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch products
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        // MSW returns raw product object for /api/products/:id
+        state.product = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error?.message;
+      })
+
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
