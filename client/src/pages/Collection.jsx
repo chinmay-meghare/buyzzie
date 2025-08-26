@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, fetchCategories } from "../products/productSlice";
+import {
+  fetchProducts,
+  fetchCategories,
+} from "../features/products/productSlice";
 import ProductFilters from "../components/collection/ProductFilters";
 import ProductCard from "../components/collection/ProductCard";
 import Pagination from "../components/collection/Pagination";
