@@ -1,10 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../../services/api";
+
+export const signup = createAsyncThunk(
+  "auth/signup",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/auth/signup", payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data);
+    }
+  }
+);
+
+export const login = createAsyncThunk(
+  "auth/login",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/auth/login", payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data);
+    }
+  }
+);
 
 const initialState = {
-  user: null,
-  token: localStorage.getItem("authToken"),
-  isAuthenticated: false,
-  loading: false,
+  user: JSON.parse(localStorage.getItem("buyzzie_user")) || null,
+  token: localStorage.getItem("buyzzie_token") || null,
+  status: "idle",
   error: null,
 };
 
@@ -12,31 +37,43 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setCredentials: (state, action) => {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.isAuthenticated = true;
-      localStorage.setItem("authToken", token);
-    },
-    logout: (state) => {
+    logout(state) {
       state.user = null;
       state.token = null;
-      state.isAuthenticated = false;
-      localStorage.removeItem("authToken");
+      localStorage.removeItem("buyzzie_user");
+      localStorage.removeItem("buyzzie_token");
     },
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-    setError: (state, action) => {
-      state.error = action.payload;
-    },
-    clearError: (state) => {
-      state.error = null;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(signup.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.error = null;
+        localStorage.setItem("buyzzie_token", action.payload.token);
+        localStorage.setItem(
+          "buyzzie_user",
+          JSON.stringify(action.payload.user)
+        );
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.error = null;
+        localStorage.setItem("buyzzie_token", action.payload.token);
+        localStorage.setItem(
+          "buyzzie_user",
+          JSON.stringify(action.payload.user)
+        );
+      })
+      .addMatcher(
+        (action) => action.type.endsWith("/rejected"),
+        (state, action) => {
+          state.error = action.payload?.error || action.error?.message;
+        }
+      );
   },
 });
 
-export const { setCredentials, logout, setLoading, setError, clearError } =
-  authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

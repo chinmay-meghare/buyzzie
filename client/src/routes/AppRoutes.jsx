@@ -10,6 +10,7 @@ import Login from "../pages/Login";
 import Logout from "../pages/Logout";
 import NotFound from "../pages/NotFound";
 import AdminPanel from "../pages/AdminPanel";
+import Signup from "../pages/Signup";
 
 const AppRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes = () => {
       <Route path="/cart" element={<Cart />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="*" element={<NotFound />} />
       {/* <Route path="/admin" element={user.role === "admin" ? <AdminPanel /> : <Navigate to="/login" />} /> */}
