@@ -29,6 +29,9 @@ function Navbar() {
     setDropdownOpen(false);
     navigate("/signup");
   };
+
+  const user_name = JSON.parse(localStorage.getItem("buyzzie_user"));
+
   return (
     <nav className="w-full flex items-center justify-between px-12 py-4 bg-[#1d0c3f] ">
       <div className="text-3xl font-bold tracking-wide">
@@ -83,9 +86,12 @@ function Navbar() {
                 </>
               ) : (
                 <>
-                  {/* <div className="px-4 py-2 text-sm text-gray-600">
-                    Welcome, <span className="font-bold">{user.username}</span>
-                  </div> */}
+                  <div className="px-4 py-2 text-sm text-gray-600">
+                    Welcome,{" "}
+                    <span className="font-bold capitalize">
+                      {user_name.name}
+                    </span>
+                  </div>
 
                   <button
                     className="flex items-center gap-2 px-4 py-2 w-full hover:bg-gray-100 text-left"
