@@ -5,7 +5,7 @@ import "./styles/App.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { store } from "./app/store";
 
 async function enableMocking() {
   if (import.meta.env.DEV) {
@@ -20,9 +20,9 @@ enableMocking().then(() => {
   createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <BrowserRouter>
-        <StrictMode>
+        {/* <StrictMode> */}
           <App />
-        </StrictMode>
+        {/* </StrictMode> */}
       </BrowserRouter>
     </Provider>
   );

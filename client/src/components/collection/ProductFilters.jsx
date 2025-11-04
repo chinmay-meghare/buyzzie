@@ -4,7 +4,7 @@ import {
   setFilters,
   clearFilters,
   fetchCategories,
-} from "../../products/productSlice";
+} from "../../features/products/productSlice";
 
 const ProductFilters = () => {
   const dispatch = useDispatch();

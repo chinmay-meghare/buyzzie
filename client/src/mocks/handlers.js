@@ -83,8 +83,8 @@ const paginateProducts = (products, page, limit) => {
 };
 
 export const handlers = [
-  // GET /api/products - Get products with pagination, filtering, and sorting
-  http.get("/api/products", ({ request }) => {
+  // GET /products - Get products with pagination, filtering, and sorting
+  http.get("/products", ({ request }) => {
     const url = new URL(request.url);
 
     // Parse query parameters
@@ -128,8 +128,8 @@ export const handlers = [
     });
   }),
 
-  // GET /api/products/:id - Get single product
-  http.get("/api/products/:id", ({ params }) => {
+  // GET /products/:id - Get single product
+  http.get("/products/:id", ({ params }) => {
     const productId = parseInt(params.id, 10);
 
     const product = productsData.find((p) => p.id === productId);
@@ -142,8 +142,8 @@ export const handlers = [
     return HttpResponse.json(product);
   }),
 
-  // GET /api/categories - Get all categories
-  http.get("/api/categories", () => {
+  // GET /categories - Get all categories
+  http.get("/categories", () => {
     const categories = [
       {
         id: 1,

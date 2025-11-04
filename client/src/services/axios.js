@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: "/",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -12,7 +12,7 @@ const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("buyzzie_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { productService } from "../../products/productService";
+import { productService } from "./productService";
 
 // === Thunks ===
 
@@ -154,12 +154,7 @@ const productSlice = createSlice({
   },
 });
 
-export const {
-  setFilters,
-  setPage,
-  clearFilters,
-  clearError,
-  clearProduct,
-} = productSlice.actions;
+export const { setFilters, setPage, clearFilters, clearError, clearProduct } =
+  productSlice.actions;
 
 export default productSlice.reducer;

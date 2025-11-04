@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../services/api";
+import api from "../../services/axios";
 
 export const signup = createAsyncThunk(
-  "auth/signup",
+  "auth/signup",  
   async (payload, { rejectWithValue }) => {
     try {
       const res = await api.post("/auth/signup", payload);
