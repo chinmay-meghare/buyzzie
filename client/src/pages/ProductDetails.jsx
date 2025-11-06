@@ -87,6 +87,33 @@ const ProductDetails = () => {
             </div>
             <p className="text-3xl font-bold mb-4">${product.price}</p>
             <p className="text-gray-400 mb-6">{product.description}</p>
+
+            <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+              <span>Stock: {product.stock}</span>
+              <span className="capitalize">{product.category.name}</span>
+            </div>
+
+            {product.colors.length > 0 && (
+          <div className="mb-3">
+            <span className="text-sm text-gray-90">Colors: </span>
+            <div className="flex gap-1 mt-1">
+              {product.colors.slice(0, 3).map((color, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-gray-600 text-xs rounded"
+                >
+                  {color}
+                </span>
+              ))}
+              {product.colors.length > 3 && (
+                <span className="px-2 py-1 bg-gray-100 text-xs rounded">
+                  +{product.colors.length - 3}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
             <div>
               <h3 className="text-lg font-semibold mb-2">Select Size</h3>
               <div className="flex space-x-2 mb-6">
