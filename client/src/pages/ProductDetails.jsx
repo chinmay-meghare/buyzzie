@@ -1,18 +1,113 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById } from "../features/products/productSlice";
+import { addToCart, selectCartError, clearError } from "../features/cart/cartSlice";
+import { isUserAuthenticated } from "../features/cart/cartUtils";
 
 const ProductDetails = () => {
   const { productId: productIdStr } = useParams();
   const productId = parseInt(productIdStr, 10);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { product, loading, error } = useSelector((state) => state.products);
+  const cartError = useSelector(selectCartError);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [addToCartLoading, setAddToCartLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     dispatch(fetchProductById(productId));
+    // Clear any previous cart errors
+    dispatch(clearError());
   }, [dispatch, productId]);
+
+  // Auto-select first size and color if available
+  useEffect(() => {
+    if (product) {
+      if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+        setSelectedSize(product.sizes[0]);
+      }
+      if (product.colors && product.colors.length > 0 && !selectedColor) {
+        setSelectedColor(product.colors[0]);
+      }
+    }
+  }, [product, selectedSize, selectedColor]);
+
+  // Show notification and clear it after 3 seconds
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  // Show cart error notification
+  useEffect(() => {
+    if (cartError) {
+      setNotification({ type: 'error', message: cartError });
+      dispatch(clearError());
+    }
+  }, [cartError, dispatch]);
+
+  const handleAddToCart = async () => {
+    try {
+      // Check if user is authenticated
+      if (!isUserAuthenticated()) {
+        console.log('User not authenticated, redirecting to signup');
+        navigate('/signup', { state: { from: `/product/${productId}` } });
+        return;
+      }
+
+      // Validate product exists
+      if (!product) {
+        setNotification({ type: 'error', message: 'Product not available' });
+        return;
+      }
+
+      // Validate stock availability
+      if (product.stock < 1) {
+        setNotification({ type: 'error', message: 'Product is out of stock' });
+        return;
+      }
+
+      setAddToCartLoading(true);
+
+      // Dispatch add to cart action
+      dispatch(
+        addToCart({
+          product,
+          size: selectedSize,
+          color: selectedColor,
+          quantity: 1,
+        })
+      );
+
+      // Show success notification
+      setNotification({
+        type: 'success',
+        message: 'Product added to cart successfully!',
+      });
+
+      console.log('Product added to cart:', {
+        productId: product.id,
+        size: selectedSize,
+        color: selectedColor,
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      setNotification({
+        type: 'error',
+        message: 'Failed to add product to cart. Please try again.',
+      });
+    } finally {
+      setAddToCartLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -40,6 +135,19 @@ const ProductDetails = () => {
 
   return (
     <div className="bg-gray-900 text-white min-h-screen p-8">
+      {/* Notification Banner */}
+      {notification && (
+        <div
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+            notification.type === 'success'
+              ? 'bg-green-600 text-white'
+              : 'bg-red-600 text-white'
+          }`}
+        >
+          {notification.message}
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -89,47 +197,75 @@ const ProductDetails = () => {
             <p className="text-gray-400 mb-6">{product.description}</p>
 
             <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-              <span>Stock: {product.stock}</span>
+              <span className={product.stock > 0 ? "text-green-400" : "text-red-400"}>
+                Stock: {product.stock}
+              </span>
               <span className="capitalize">{product.category.name}</span>
             </div>
 
-            {product.colors.length > 0 && (
-          <div className="mb-3">
-            <span className="text-sm text-gray-90">Colors: </span>
-            <div className="flex gap-1 mt-1">
-              {product.colors.slice(0, 3).map((color, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-gray-600 text-xs rounded"
-                >
-                  {color}
-                </span>
-              ))}
-              {product.colors.length > 3 && (
-                <span className="px-2 py-1 bg-gray-100 text-xs rounded">
-                  +{product.colors.length - 3}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Select Size</h3>
-              <div className="flex space-x-2 mb-6">
-                {product.sizes.map((size) => (
-                  <button
-                    key={size}
-                    className="w-12 h-12 border border-gray-600 rounded-lg hover:bg-gray-700 focus:bg-gray-700 focus:outline-none"
-                  >
-                    {size}
-                  </button>
-                ))}
+            {/* Color Selection */}
+            {product.colors && product.colors.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">Select Color</h3>
+                <div className="flex gap-2 flex-wrap">
+                  {product.colors.map((color, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
+                        selectedColor === color
+                          ? "bg-indigo-600 border-indigo-400 text-white"
+                          : "bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600"
+                      }`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-            <button className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700">
-              Add to Cart
+            )}
+
+            {/* Size Selection */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-2">Select Size</h3>
+                <div className="flex space-x-2 flex-wrap">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`w-12 h-12 border rounded-lg transition-colors ${
+                        selectedSize === size
+                          ? "bg-indigo-600 border-indigo-400 text-white"
+                          : "border-gray-600 text-gray-300 hover:bg-gray-700"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Add to Cart Button */}
+            <button
+              onClick={handleAddToCart}
+              disabled={addToCartLoading || product.stock < 1}
+              className={`w-full py-3 rounded-lg font-semibold transition-colors ${
+                product.stock < 1
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : addToCartLoading
+                  ? "bg-indigo-500 text-white cursor-wait"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+              }`}
+            >
+              {addToCartLoading
+                ? "Adding to Cart..."
+                : product.stock < 1
+                ? "Out of Stock"
+                : "Add to Cart"}
             </button>
+
             <div className="mt-6 text-sm text-gray-400">
               <p>100% Original product.</p>
               <p>Cash on delivery is available on this product.</p>

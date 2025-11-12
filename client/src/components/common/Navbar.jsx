@@ -105,9 +105,11 @@ function Navbar() {
             </div>
           )}
         </span>
-        <span className="relative cursor-pointer">
-          <FontAwesomeIcon icon={faCartShopping} />
-        </span>
+        <Link to="/cart">
+          <span className="relative cursor-pointer">
+            <FontAwesomeIcon icon={faCartShopping} />
+          </span>
+        </Link>
       </div>
     </nav>
   );
