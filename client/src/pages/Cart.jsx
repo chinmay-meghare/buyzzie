@@ -254,15 +254,12 @@ const Cart = () => {
                 </div>
               </div>
 
-              <button
-                onClick={() => {
-                  // TODO: Implement checkout functionality
-                  alert("Checkout functionality will be implemented soon!");
-                }}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition-colors mb-4"
+              <Link
+                to="/checkout"
+                className="w-full block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition-colors mb-4"
               >
                 Proceed to Checkout
-              </button>
+              </Link>
 
               <Link
                 to="/collection"

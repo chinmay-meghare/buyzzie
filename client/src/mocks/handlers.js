@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { productsData } from "./data/products";
 import { authHandlers } from "./handlers.auth";
+import { orderHandlers } from "./handlers.orders";
 
 // Helper function to filter products
 const filterProducts = (products, filters) => {
@@ -180,4 +181,5 @@ export const handlers = [
     return HttpResponse.json(categories);
   }),
   ...authHandlers,
+  ...orderHandlers,
 ];
