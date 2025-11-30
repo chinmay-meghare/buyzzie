@@ -33,7 +33,7 @@ function Navbar() {
   const user_name = JSON.parse(localStorage.getItem("buyzzie_user"));
 
   return (
-    <nav className="w-full flex items-center justify-between px-12 py-4 bg-[#1d0c3f] ">
+    <nav className="w-full border-b border-gray-700 flex items-center justify-between px-12 py-4 bg-transparent">
       <div className="text-3xl font-bold tracking-wide">
         <Link to="/">
           <h1 className="text-5xl md:text-3xl font-black leading-tight mb-2">

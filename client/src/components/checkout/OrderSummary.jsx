@@ -73,10 +73,10 @@ const OrderSummary = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 lg:sticky lg:top-8">
+    <div className="bg-gray-800 rounded-lg shadow-sm p-6 lg:sticky lg:top-8">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Order Summary</h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <h2 className="text-xl font-bold text-gray-300">Order Summary</h2>
+        <p className="text-sm text-gray-300 mt-1">
           {totalItems} {totalItems === 1 ? "item" : "items"}
         </p>
       </div>
@@ -109,7 +109,7 @@ const OrderSummary = ({
                   />
                 ) : (
                   <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
-                    <span className="text-xs text-gray-400">No Image</span>
+                    <span className="text-xs text-gray-300">No Image</span>
                   </div>
                 )}
               </div>
@@ -119,14 +119,14 @@ const OrderSummary = ({
                   {item.title || "Unknown Product"}
                 </h3>
                 {(item.size || item.color) && (
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-300 mt-1">
                     {item.size && `Size: ${item.size}`}
                     {item.size && item.color && " • "}
                     {item.color && `Color: ${item.color}`}
                   </p>
                 )}
                 <div className="mt-2 flex justify-between">
-                  <span className="text-sm text-gray-500">Qty: {qty}</span>
+                  <span className="text-sm text-gray-300">Qty: {qty}</span>
                   <span className="text-sm font-medium">
                     {format(itemTotal)}
                   </span>
@@ -140,11 +140,11 @@ const OrderSummary = ({
       {/* Price Breakdown */}
       <div className="space-y-3 pt-4 border-t border-gray-200">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Subtotal</span>
+          <span className="text-gray-300">Subtotal</span>
           <span className="font-medium">{format(subtotal)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Shipping</span>
+          <span className="text-gray-300">Shipping</span>
           <span className="font-medium">
             {shipping === 0 ? (
               <span className="text-green-600">Free</span>
@@ -154,7 +154,7 @@ const OrderSummary = ({
           </span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Tax</span>
+          <span className="text-gray-300">Tax</span>
           <span className="font-medium">{format(tax)}</span>
         </div>
 

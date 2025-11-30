@@ -262,10 +262,10 @@ const PaymentMethodSelector = ({
   }, [validateAll]);
   
   return (
-    <section className="bg-white rounded-lg shadow-sm p-6">
+    <section className="bg-gray-800 rounded-lg shadow-sm p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Payment Method</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <h2 className="text-xl font-bold text-gray-200">Payment Method</h2>
+        <p className="mt-1 text-sm text-gray-200">
           Choose how you would like to complete your purchase.
         </p>
       </div>
@@ -277,7 +277,7 @@ const PaymentMethodSelector = ({
             <label
               key={option.value}
               className={`flex items-start p-4 border rounded-lg cursor-pointer transition-colors ${
-                isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white'
+                isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-slate-300'
               }`}
             >
               <input
@@ -300,14 +300,14 @@ const PaymentMethodSelector = ({
       
       {paymentMethod === 'Card' && (
         <div className="mt-6">
-          <h3 className="text-lg font-semibold text-gray-900">Card Details</h3>
-          <p className="text-sm text-gray-500 mt-1">
+          <h3 className="text-lg font-semibold text-gray-200">Card Details</h3>
+          <p className="text-sm text-gray-200 mt-1">
             Mock UI only. No payment will be processed.
           </p>
           
           <div className="mt-4 space-y-4">
             <div>
-              <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-200 mb-1">
                 Card Number
               </label>
               <input
@@ -323,8 +323,8 @@ const PaymentMethodSelector = ({
                 aria-label="Card number"
                 aria-invalid={Boolean(activeErrors.cardNumber)}
                 aria-describedby={activeErrors.cardNumber ? 'cardNumber-error' : undefined}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  activeErrors.cardNumber ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
+                className={`w-full input-text px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  activeErrors.cardNumber ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-slate-300'
                 }`}
               />
               {activeErrors.cardNumber && (
@@ -340,7 +340,7 @@ const PaymentMethodSelector = ({
             </div>
             
             <div>
-              <label htmlFor="cardholderName" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="cardholderName" className="block text-sm font-medium text-gray-200 mb-1">
                 Cardholder Name
               </label>
               <input
@@ -355,8 +355,8 @@ const PaymentMethodSelector = ({
                 aria-label="Cardholder name"
                 aria-invalid={Boolean(activeErrors.cardholderName)}
                 aria-describedby={activeErrors.cardholderName ? 'cardholderName-error' : undefined}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  activeErrors.cardholderName ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
+                className={`w-full input-text px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  activeErrors.cardholderName ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-slate-300'
                 }`}
               />
               {activeErrors.cardholderName && (
@@ -373,7 +373,7 @@ const PaymentMethodSelector = ({
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-200 mb-1">
                   Expiry Date (MM/YY)
                 </label>
                 <input
@@ -389,8 +389,8 @@ const PaymentMethodSelector = ({
                   aria-label="Card expiry date"
                   aria-invalid={Boolean(activeErrors.expiryDate)}
                   aria-describedby={activeErrors.expiryDate ? 'expiryDate-error' : undefined}
-                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    activeErrors.expiryDate ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
+                  className={`w-full input-text px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    activeErrors.expiryDate ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-slate-300'
                   }`}
                   maxLength={5}
                 />
@@ -407,7 +407,7 @@ const PaymentMethodSelector = ({
               </div>
               
               <div>
-                <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="cvv" className="block text-sm font-medium text-gray-200 mb-1">
                   CVV
                 </label>
                 <input
@@ -423,8 +423,8 @@ const PaymentMethodSelector = ({
                   aria-label="Card security code"
                   aria-invalid={Boolean(activeErrors.cvv)}
                   aria-describedby={activeErrors.cvv ? 'cvv-error' : undefined}
-                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    activeErrors.cvv ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
+                  className={`w-full input-text px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    activeErrors.cvv ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-slate-300'
                   }`}
                   maxLength={3}
                 />

@@ -15,6 +15,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@layer components {
+  .hero-bg {
+    background-image: url('./assets/images/pexels-samad-ismayilov.jpg');
+  }
+
+  .input-text {
+    @apply text-black;
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

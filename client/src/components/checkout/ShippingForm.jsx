@@ -175,11 +175,11 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-gray-800 rounded-lg shadow-sm p-6">
       {/* Section Header */}
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Shipping Information</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <h2 className="text-xl font-bold text-gray-200">Shipping Information</h2>
+        <p className="mt-1 text-sm text-gray-200">
           Enter your delivery details below
         </p>
       </div>
@@ -189,7 +189,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
         <div>
           <label
             htmlFor="fullName"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-300 mb-1"
           >
             Full Name <span className="text-red-500">*</span>
           </label>
@@ -200,10 +200,10 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
             value={safeShippingInfo.fullName ?? ''}
             onChange={(e) => handleInputChange('fullName', e.target.value)}
             onBlur={() => handleFieldBlur('fullName')}
-            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+            className={`w-full input-text px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               safeFormErrors.fullName
                 ? 'border-red-300 bg-red-50'
-                : 'border-gray-300 bg-white'
+                : 'border-gray-300 bg-slate-300'
             }`}
             placeholder="John Doe"
             aria-label="Full name"
@@ -228,7 +228,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-300 mb-1"
           >
             Email Address <span className="text-red-500">*</span>
           </label>
@@ -239,10 +239,10 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
             value={safeShippingInfo.email ?? ''}
             onChange={(e) => handleInputChange('email', e.target.value)}
             onBlur={() => handleFieldBlur('email')}
-            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+            className={`w-full px-4 input-text py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               safeFormErrors.email
                 ? 'border-red-300 bg-red-50'
-                : 'border-gray-300 bg-white'
+                : 'border-gray-300 bg-slate-300'
             }`}
             placeholder="john.doe@example.com"
             aria-label="Email address"
@@ -266,7 +266,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
         <div>
           <label
             htmlFor="phone"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-300 mb-1"
           >
             Phone Number <span className="text-red-500">*</span>
           </label>
@@ -277,10 +277,10 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
             value={safeShippingInfo.phone ?? ''}
             onChange={(e) => handleInputChange('phone', e.target.value)}
             onBlur={() => handleFieldBlur('phone')}
-            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+            className={`w-full px-4 input-text py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               safeFormErrors.phone
                 ? 'border-red-300 bg-red-50'
-                : 'border-gray-300 bg-white'
+                : 'border-gray-300 bg-slate-300'
             }`}
             placeholder="123-456-7890"
             aria-label="Phone number"
@@ -305,7 +305,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
         <div>
           <label
             htmlFor="address"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-300 mb-1"
           >
             Street Address <span className="text-red-500">*</span>
           </label>
@@ -316,10 +316,10 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
             value={safeShippingInfo.address ?? ''}
             onChange={(e) => handleInputChange('address', e.target.value)}
             onBlur={() => handleFieldBlur('address')}
-            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+            className={`w-full px-4 input-text py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               safeFormErrors.address
                 ? 'border-red-300 bg-red-50'
-                : 'border-gray-300 bg-white'
+                : 'border-gray-300 bg-slate-300'
             }`}
             placeholder="123 Main Street, Apt 4B"
             aria-label="Street address"
@@ -345,7 +345,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
           <div>
             <label
               htmlFor="city"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               City <span className="text-red-500">*</span>
             </label>
@@ -356,10 +356,10 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
               value={safeShippingInfo.city ?? ''}
               onChange={(e) => handleInputChange('city', e.target.value)}
               onBlur={() => handleFieldBlur('city')}
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-4 input-text py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
                 safeFormErrors.city
                   ? 'border-red-300 bg-red-50'
-                  : 'border-gray-300 bg-white'
+                  : 'border-gray-300 bg-slate-300'
               }`}
               placeholder="Mumbai"
               aria-label="City"
@@ -383,7 +383,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
           <div>
             <label
               htmlFor="state"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               State <span className="text-red-500">*</span>
             </label>
@@ -394,10 +394,10 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
               value={safeShippingInfo.state ?? ''}
               onChange={(e) => handleInputChange('state', e.target.value)}
               onBlur={() => handleFieldBlur('state')}
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-4 input-text py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
                 safeFormErrors.state
                   ? 'border-red-300 bg-red-50'
-                  : 'border-gray-300 bg-white'
+                  : 'border-gray-300 bg-slate-300'
               }`}
               placeholder="Maharashtra"
               aria-label="State"
@@ -424,7 +424,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
           <div>
             <label
               htmlFor="zipCode"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               ZIP Code <span className="text-red-500">*</span>
             </label>
@@ -435,10 +435,10 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
               value={safeShippingInfo.zipCode ?? ''}
               onChange={(e) => handleInputChange('zipCode', e.target.value)}
               onBlur={() => handleFieldBlur('zipCode')}
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-4 input-text py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
                 safeFormErrors.zipCode
                   ? 'border-red-300 bg-red-50'
-                  : 'border-gray-300 bg-white'
+                  : 'border-gray-300 bg-slate-300'
               }`}
               placeholder="400001"
               aria-label="ZIP code"
@@ -463,7 +463,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
           <div>
             <label
               htmlFor="country"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Country <span className="text-red-500">*</span>
             </label>
@@ -472,7 +472,7 @@ const ShippingForm = ({ shippingInfo, setShippingInfo, formErrors = {} }) => {
               name="country"
               value={safeShippingInfo.country ?? 'India'}
               onChange={(e) => handleInputChange('country', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
+              className="w-full px-4 input-text py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-slate-300"
               aria-label="Country"
               autoComplete="country"
             >
