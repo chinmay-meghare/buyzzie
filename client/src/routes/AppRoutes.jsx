@@ -6,6 +6,7 @@ import Collection from "../pages/Collection";
 import ProductDetails from "../pages/ProductDetails";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
+import OrderConfirmation from "../pages/OrderConfirmation";
 import Profile from "../pages/Profile";
 import Login from "../pages/Login";
 import Logout from "../pages/Logout";
@@ -27,6 +28,14 @@ const AppRoutes = () => {
         element={
           <PrivateRoute>
             <Checkout />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/order-confirmation/:orderId" 
+        element={
+          <PrivateRoute>
+            <OrderConfirmation />
           </PrivateRoute>
         } 
       />
