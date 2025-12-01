@@ -1,6 +1,6 @@
 /**
  * OrderConfirmation.jsx
- * 
+ *
  * Production-level order confirmation page with:
  * - Redux-first data retrieval with fallback fetch
  * - Animated success checkmark
@@ -9,9 +9,9 @@
  * - Error handling for 404 and fetch failures
  */
 
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   selectCurrentOrder,
@@ -19,7 +19,7 @@ import {
   selectOrdersError,
   fetchOrderById,
   clearError,
-} from '../features/orders/orderSlice';
+} from "../features/orders/orderSlice";
 
 const OrderConfirmation = () => {
   const { orderId } = useParams();
@@ -42,17 +42,21 @@ const OrderConfirmation = () => {
   // Trigger checkmark animation on mount
   useEffect(() => {
     if (currentOrder) {
-      setCheckmarkAnimated(true);
+      // Add a small delay to ensure the user sees the animation start
+      const timer = setTimeout(() => {
+        setCheckmarkAnimated(true);
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [currentOrder]);
 
   // Fetch order if not in Redux and orderId exists
   useEffect(() => {
     if (!orderId) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('OrderConfirmation: Missing orderId in URL params');
+      if (process.env.NODE_ENV === "development") {
+        console.warn("OrderConfirmation: Missing orderId in URL params");
       }
-      navigate('/');
+      navigate("/");
       return;
     }
 
@@ -61,14 +65,19 @@ const OrderConfirmation = () => {
 
     if (!currentOrder || !orderMatches) {
       if (!loading) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('OrderConfirmation: Fetching order from API', { orderId, currentOrderId: currentOrder?.id });
+        if (process.env.NODE_ENV === "development") {
+          console.log("OrderConfirmation: Fetching order from API", {
+            orderId,
+            currentOrderId: currentOrder?.id,
+          });
         }
         dispatch(fetchOrderById(orderId));
       }
     } else {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('OrderConfirmation: Using order from Redux state', { orderId });
+      if (process.env.NODE_ENV === "development") {
+        console.log("OrderConfirmation: Using order from Redux state", {
+          orderId,
+        });
       }
     }
   }, [orderId, currentOrder, loading, dispatch, navigate]);
@@ -81,57 +90,57 @@ const OrderConfirmation = () => {
 
   // Format date helper
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
     } catch (error) {
-      return 'Invalid Date';
+      return "Invalid Date";
     }
   };
 
   // Get estimated delivery date (7 days from order date)
   const getEstimatedDelivery = (orderDate) => {
-    if (!orderDate) return 'N/A';
+    if (!orderDate) return "N/A";
     try {
       const deliveryDate = new Date(orderDate);
       deliveryDate.setDate(deliveryDate.getDate() + 7);
       return formatDate(deliveryDate.toISOString());
     } catch (error) {
-      return 'N/A';
+      return "N/A";
     }
   };
 
   // Get status badge color
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'processing':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'shipped':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'delivered':
-        return 'bg-green-100 text-green-800 border-green-200';
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "processing":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "shipped":
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      case "delivered":
+        return "bg-green-100 text-green-800 border-green-200";
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   // Get payment method display name
   const getPaymentMethodDisplay = (method) => {
     switch (method?.toUpperCase()) {
-      case 'COD':
-        return 'Cash on Delivery';
-      case 'CARD':
-        return 'Credit / Debit Card';
-      case 'UPI':
-        return 'UPI';
+      case "COD":
+        return "Cash on Delivery";
+      case "CARD":
+        return "Credit / Debit Card";
+      case "UPI":
+        return "UPI";
       default:
-        return method ?? 'N/A';
+        return method ?? "N/A";
     }
   };
 
@@ -161,8 +170,8 @@ const OrderConfirmation = () => {
 
   // Error state (404 or fetch failure)
   if (error || (!loading && !currentOrder && orderId)) {
-    const isNotFound = error?.includes('not found') || error?.includes('404');
-    
+    const isNotFound = error?.includes("not found") || error?.includes("404");
+
     return (
       <div className="min-h-screen bg-gray-900 py-8 flex items-center justify-center">
         <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -185,15 +194,17 @@ const OrderConfirmation = () => {
               </svg>
             </div>
 
-            <h1 className="text-2xl font-bold text-gray-200 mb-2">Order Not Found</h1>
+            <h1 className="text-2xl font-bold text-gray-200 mb-2">
+              Order Not Found
+            </h1>
             <p className="text-gray-300 mb-6">
               {isNotFound
                 ? "This order doesn't exist or you don't have permission to view it."
-                : 'Failed to load order details. Please try again later.'}
+                : "Failed to load order details. Please try again later."}
             </p>
 
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
               aria-label="Return to home page"
             >
@@ -231,7 +242,7 @@ const OrderConfirmation = () => {
         <div
           className="bg-white rounded-lg shadow-md p-6 mb-6 transform transition-all duration-300"
           style={{
-            animation: checkmarkAnimated ? 'fadeInScale 0.4s ease-out' : 'none',
+            animation: checkmarkAnimated ? "fadeInScale 0.4s ease-out" : "none",
           }}
         >
           <div className="flex flex-col items-center text-center">
@@ -244,53 +255,26 @@ const OrderConfirmation = () => {
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
-                <defs>
-                  <linearGradient id="checkmarkGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop
-                      offset="0%"
-                      stopColor="currentColor"
-                      stopOpacity={checkmarkAnimated ? 1 : 0}
-                    >
-                      {checkmarkAnimated && (
-                        <animate
-                          attributeName="stop-opacity"
-                          from="0"
-                          to="1"
-                          dur="0.6s"
-                          fill="freeze"
-                        />
-                      )}
-                    </stop>
-                  </linearGradient>
-                </defs>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={3}
-                  strokeDasharray={checkmarkAnimated ? '0 100' : '100 0'}
-                  strokeDashoffset={checkmarkAnimated ? '0' : '100'}
                   d="M5 13l4 4L19 7"
                   style={{
-                    stroke: checkmarkAnimated ? '#10B981' : 'transparent',
-                    transition: 'stroke-dashoffset 0.6s ease-in-out',
+                    strokeDasharray: 100,
+                    strokeDashoffset: checkmarkAnimated ? 0 : 100,
+                    transition: "stroke-dashoffset 1s ease-in-out",
                   }}
-                >
-                  {checkmarkAnimated && (
-                    <animate
-                      attributeName="stroke-dashoffset"
-                      from="100"
-                      to="0"
-                      dur="0.6s"
-                      fill="freeze"
-                    />
-                  )}
-                </path>
+                />
               </svg>
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Order Confirmed!
+            </h1>
             <p className="text-gray-600">
-              Thank you for your purchase. We've received your order and will send you a confirmation email shortly.
+              Thank you for your purchase. We've received your order and will
+              send you a confirmation email shortly.
             </p>
           </div>
         </div>
@@ -300,11 +284,13 @@ const OrderConfirmation = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {/* Order ID & Date */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-200 mb-4">Order Information</h2>
+              <h2 className="text-lg font-semibold text-gray-200 mb-4">
+                Order Information
+              </h2>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Order ID:</span>
-                  <span className="text-gray-200 font-mono">{id ?? 'N/A'}</span>
+                  <span className="text-gray-200 font-mono">{id ?? "N/A"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Order Date:</span>
@@ -313,9 +299,11 @@ const OrderConfirmation = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Status:</span>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(status)}`}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                      status
+                    )}`}
                   >
-                    {status ?? 'Pending'}
+                    {status ?? "Pending"}
                   </span>
                 </div>
               </div>
@@ -323,36 +311,49 @@ const OrderConfirmation = () => {
 
             {/* Delivery & Payment */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-200 mb-4">Delivery & Payment</h2>
+              <h2 className="text-lg font-semibold text-gray-200 mb-4">
+                Delivery & Payment
+              </h2>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Estimated Delivery:</span>
                   <span className="text-gray-200">
-                    {estimatedDelivery ? formatDate(estimatedDelivery) : getEstimatedDelivery(createdAt)}
+                    {estimatedDelivery
+                      ? formatDate(estimatedDelivery)
+                      : getEstimatedDelivery(createdAt)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Payment Method:</span>
-                  <span className="text-gray-200">{getPaymentMethodDisplay(paymentMethod)}</span>
+                  <span className="text-gray-200">
+                    {getPaymentMethodDisplay(paymentMethod)}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Shipping Address */}
+          {/* Shipping Address */}I
           <div className="border-t border-gray-700 pt-6">
-            <h2 className="text-lg font-semibold text-gray-200 mb-4">Shipping Address</h2>
+            <h2 className="text-lg font-semibold text-gray-200 mb-4">
+              Shipping Address
+            </h2>
             <div className="text-sm text-gray-300 space-y-1">
-              <p className="font-medium">{shippingAddress.fullName ?? 'N/A'}</p>
-              <p>{shippingAddress.address ?? ''}</p>
+              <p className="font-medium">{shippingAddress.fullName ?? "N/A"}</p>
+              <p>{shippingAddress.address ?? ""}</p>
               <p>
-                {[shippingAddress.city, shippingAddress.state, shippingAddress.zipCode]
+                {[
+                  shippingAddress.city,
+                  shippingAddress.state,
+                  shippingAddress.zipCode,
+                ]
                   .filter(Boolean)
-                  .join(', ')}
+                  .join(", ")}
               </p>
               {shippingAddress.country && <p>{shippingAddress.country}</p>}
               {shippingAddress.phone && (
-                <p className="mt-2 text-gray-400">Phone: {shippingAddress.phone}</p>
+                <p className="mt-2 text-gray-400">
+                  Phone: {shippingAddress.phone}
+                </p>
               )}
               {shippingAddress.email && (
                 <p className="text-gray-400">Email: {shippingAddress.email}</p>
@@ -370,11 +371,15 @@ const OrderConfirmation = () => {
               onClick={() => setIsOrderSummaryExpanded(!isOrderSummaryExpanded)}
               className="md:hidden p-2 text-gray-400 hover:text-gray-200 transition-colors"
               aria-expanded={isOrderSummaryExpanded}
-              aria-label={isOrderSummaryExpanded ? 'Collapse order summary' : 'Expand order summary'}
+              aria-label={
+                isOrderSummaryExpanded
+                  ? "Collapse order summary"
+                  : "Expand order summary"
+              }
             >
               <svg
                 className={`w-5 h-5 transform transition-transform duration-300 ${
-                  isOrderSummaryExpanded ? 'rotate-180' : ''
+                  isOrderSummaryExpanded ? "rotate-180" : ""
                 }`}
                 fill="none"
                 stroke="currentColor"
@@ -392,11 +397,15 @@ const OrderConfirmation = () => {
 
           {/* Order Items List - Hidden on mobile when collapsed */}
           <div
-            className={`space-y-4 ${isOrderSummaryExpanded ? 'block' : 'hidden'} md:block`}
+            className={`space-y-4 ${
+              isOrderSummaryExpanded ? "block" : "hidden"
+            } md:block`}
             aria-hidden={!isOrderSummaryExpanded}
           >
             {items.length === 0 ? (
-              <p className="text-gray-400 text-center py-4">No items found in this order.</p>
+              <p className="text-gray-400 text-center py-4">
+                No items found in this order.
+              </p>
             ) : (
               items.map((item, index) => {
                 const itemPrice = Number(item.price) || 0;
@@ -414,7 +423,7 @@ const OrderConfirmation = () => {
                       {itemImage ? (
                         <img
                           src={itemImage}
-                          alt={item.title ?? 'Product'}
+                          alt={item.title ?? "Product"}
                           className="w-20 h-20 object-cover rounded-md"
                           onError={(e) => {
                             e.target.src =
@@ -423,7 +432,9 @@ const OrderConfirmation = () => {
                         />
                       ) : (
                         <div className="w-20 h-20 bg-gray-700 rounded-md flex items-center justify-center">
-                          <span className="text-xs text-gray-400">No Image</span>
+                          <span className="text-xs text-gray-400">
+                            No Image
+                          </span>
                         </div>
                       )}
                     </div>
@@ -431,17 +442,19 @@ const OrderConfirmation = () => {
                     {/* Product Details */}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-gray-200 truncate">
-                        {item.title ?? 'Unknown Product'}
+                        {item.title ?? "Unknown Product"}
                       </h3>
                       {(item.size || item.color) && (
                         <p className="text-xs text-gray-400 mt-1">
                           {item.size && `Size: ${item.size}`}
-                          {item.size && item.color && ' • '}
+                          {item.size && item.color && " • "}
                           {item.color && `Color: ${item.color}`}
                         </p>
                       )}
                       <div className="mt-2 flex justify-between items-center">
-                        <span className="text-sm text-gray-400">Quantity: {itemQuantity}</span>
+                        <span className="text-sm text-gray-400">
+                          Quantity: {itemQuantity}
+                        </span>
                         <span className="text-sm font-semibold text-gray-200">
                           {formatCurrency(itemTotal)}
                         </span>
@@ -456,11 +469,15 @@ const OrderConfirmation = () => {
 
         {/* Order Totals */}
         <div className="bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-200 mb-4">Order Summary</h2>
+          <h2 className="text-lg font-semibold text-gray-200 mb-4">
+            Order Summary
+          </h2>
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">Subtotal</span>
-              <span className="text-gray-200 font-medium">{formatCurrency(subtotal)}</span>
+              <span className="text-gray-200 font-medium">
+                {formatCurrency(subtotal)}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">Shipping</span>
@@ -474,11 +491,18 @@ const OrderConfirmation = () => {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">Tax</span>
-              <span className="text-gray-200 font-medium">{formatCurrency(tax)}</span>
+              <span className="text-gray-200 font-medium">
+                {formatCurrency(tax)}
+              </span>
             </div>
             <div className="flex justify-between pt-3 border-t border-gray-700">
-              <span className="text-base font-semibold text-gray-200">Grand Total</span>
-              <span className="text-lg font-bold text-gray-100" aria-live="polite">
+              <span className="text-base font-semibold text-gray-200">
+                Grand Total
+              </span>
+              <span
+                className="text-lg font-bold text-gray-100"
+                aria-live="polite"
+              >
                 {formatCurrency(total)}
               </span>
             </div>
@@ -488,14 +512,14 @@ const OrderConfirmation = () => {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4">
           <button
-            onClick={() => navigate('/collection')}
+            onClick={() => navigate("/collection")}
             className="flex-1 py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors min-h-[44px]"
             aria-label="Continue shopping"
           >
             Continue Shopping
           </button>
           <button
-            onClick={() => navigate('/orders')}
+            onClick={() => navigate("/orders")}
             className="flex-1 py-3 px-6 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors min-h-[44px]"
             aria-label="View all orders"
           >
