@@ -32,23 +32,11 @@ const OrderConfirmation = () => {
 
   // Mobile collapsible state (default collapsed on mobile)
   const [isOrderSummaryExpanded, setIsOrderSummaryExpanded] = useState(false);
-  const [checkmarkAnimated, setCheckmarkAnimated] = useState(false);
 
   // Clear errors on mount
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
-
-  // Trigger checkmark animation on mount
-  useEffect(() => {
-    if (currentOrder) {
-      // Add a small delay to ensure the user sees the animation start
-      const timer = setTimeout(() => {
-        setCheckmarkAnimated(true);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [currentOrder]);
 
   // Fetch order if not in Redux and orderId exists
   useEffect(() => {
@@ -238,15 +226,10 @@ const OrderConfirmation = () => {
   return (
     <div className="min-h-screen bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Success Animation Card */}
-        <div
-          className="bg-white rounded-lg shadow-md p-6 mb-6 transform transition-all duration-300"
-          style={{
-            animation: checkmarkAnimated ? "fadeInScale 0.4s ease-out" : "none",
-          }}
-        >
+        {/* Success Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex flex-col items-center text-center">
-            {/* Animated Checkmark */}
+            {/* Static Checkmark */}
             <div className="mb-4 relative">
               <svg
                 className="w-16 h-16 text-green-500"
@@ -260,11 +243,6 @@ const OrderConfirmation = () => {
                   strokeLinejoin="round"
                   strokeWidth={3}
                   d="M5 13l4 4L19 7"
-                  style={{
-                    strokeDasharray: 100,
-                    strokeDashoffset: checkmarkAnimated ? 0 : 100,
-                    transition: "stroke-dashoffset 1s ease-in-out",
-                  }}
                 />
               </svg>
             </div>
@@ -332,7 +310,7 @@ const OrderConfirmation = () => {
               </div>
             </div>
           </div>
-          {/* Shipping Address */}I
+          {/* Shipping Address */}
           <div className="border-t border-gray-700 pt-6">
             <h2 className="text-lg font-semibold text-gray-200 mb-4">
               Shipping Address
@@ -527,20 +505,6 @@ const OrderConfirmation = () => {
           </button>
         </div>
       </div>
-
-      {/* CSS Animation */}
-      <style>{`
-        @keyframes fadeInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </div>
   );
 };
