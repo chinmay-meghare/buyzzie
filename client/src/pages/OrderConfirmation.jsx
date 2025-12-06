@@ -51,24 +51,23 @@ const OrderConfirmation = () => {
     // Check if current order matches the orderId from URL
     const orderMatches = currentOrder?.id === orderId;
 
-    if (!currentOrder || !orderMatches) {
-      if (!loading) {
-        if (process.env.NODE_ENV === "development") {
-          console.log("OrderConfirmation: Fetching order from API", {
-            orderId,
-            currentOrderId: currentOrder?.id,
-          });
-        }
-        dispatch(fetchOrderById(orderId));
+    // Only fetch if NO error exists and order doesn't match
+    if (!orderMatches && !error) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("OrderConfirmation: Fetching order from API", {
+          orderId,
+          currentOrderId: currentOrder?.id,
+        });
       }
-    } else {
+      dispatch(fetchOrderById(orderId));
+    } else if (orderMatches) {
       if (process.env.NODE_ENV === "development") {
         console.log("OrderConfirmation: Using order from Redux state", {
           orderId,
         });
       }
     }
-  }, [orderId, currentOrder, loading, dispatch, navigate]);
+  }, [orderId, currentOrder, error, dispatch, navigate]);
 
   // Format currency helper
   const formatCurrency = (amount) => {
