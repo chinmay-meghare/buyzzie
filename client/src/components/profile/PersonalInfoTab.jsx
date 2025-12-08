@@ -345,19 +345,6 @@ const PersonalInfoTab = ({ user }) => {
                         )}
                     </div>
 
-                    {/* Role Badge */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                            Account Role
-                        </label>
-                        <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${user?.role === 'admin'
-                            ? 'bg-purple-900 text-purple-200 border border-purple-500'
-                            : 'bg-blue-900 text-blue-200 border border-blue-500'
-                            }`}>
-                            {user?.role?.toUpperCase() ?? 'USER'}
-                        </span>
-                    </div>
-
                     {/* Account Created Date */}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1">
