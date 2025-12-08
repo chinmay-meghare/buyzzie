@@ -59,6 +59,10 @@ export const authHandlers = [
       email,
       password,
       role: "user",
+      phone: "",
+      profilePicture: null,
+      addresses: [],
+      createdAt: new Date().toISOString(),
     };
     db.users.push(newUser);
     DB.write(db);
@@ -73,6 +77,9 @@ export const authHandlers = [
           name,
           email,
           role: newUser.role,
+          phone: newUser.phone,
+          profilePicture: newUser.profilePicture,
+          createdAt: newUser.createdAt,
         },
       },
       { status: 201 }
@@ -107,6 +114,9 @@ export const authHandlers = [
           name: user.name,
           email: user.email,
           role: user.role,
+          phone: user.phone ?? "",
+          profilePicture: user.profilePicture ?? null,
+          createdAt: user.createdAt ?? new Date().toISOString(),
         },
       },
       { status: 200 }

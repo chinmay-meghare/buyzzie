@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import { productsData } from "./data/products";
 import { authHandlers } from "./handlers.auth";
 import { orderHandlers } from "./handlers.orders";
+import { userHandlers } from "./handlers.user";
 
 // Helper function to filter products
 const filterProducts = (products, filters) => {
@@ -182,4 +183,5 @@ export const handlers = [
   }),
   ...authHandlers,
   ...orderHandlers,
+  ...userHandlers,
 ];
