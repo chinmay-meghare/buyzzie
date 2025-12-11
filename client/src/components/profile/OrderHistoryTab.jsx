@@ -61,6 +61,13 @@ const getStatusColor = (status) => {
     }
 };
 
+/**
+ * Get product image with fallback
+ */
+const getProductImage = (item) => {
+    return item?.images?.[0] ?? item?.image ?? null;
+};
+
 const OrderHistoryTab = () => {
     const dispatch = useDispatch();
     const orders = useSelector(selectOrders);
@@ -191,43 +198,51 @@ const OrderHistoryTab = () => {
                             {order.items && order.items.length > 0 && (
                                 <div className="border-t border-gray-600 pt-3">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                        {order.items.map((item, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex items-center gap-3 bg-gray-800 rounded-md p-2"
-                                            >
-                                                {/* Product Image */}
-                                                <div className="w-12 h-12 flex-shrink-0 bg-gray-700 rounded overflow-hidden">
-                                                    {item.image ? (
-                                                        <img
-                                                            src={item.image}
-                                                            alt={item.name || 'Product'}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center">
-                                                            <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                            </svg>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                        {order.items.map((item, index) => {
+                                            const itemImage = getProductImage(item);
 
-                                                {/* Product Details */}
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-sm text-gray-200 font-medium truncate">
-                                                        {item.name || 'Product'}
-                                                    </p>
-                                                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                                                        <span>Qty: {item.quantity || 1}</span>
-                                                        <span>•</span>
-                                                        <span className="text-gray-300 font-semibold">
-                                                            {formatCurrency(item.price * (item.quantity || 1))}
-                                                        </span>
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center gap-3 bg-gray-800 rounded-md p-2"
+                                                >
+                                                    {/* Product Image */}
+                                                    <div className="flex-shrink-0">
+                                                        {itemImage ? (
+                                                            <img
+                                                                src={itemImage}
+                                                                alt={item.title ?? item.name ?? 'Product'}
+                                                                className="w-20 h-20 object-cover rounded-md"
+                                                                onError={(e) => {
+                                                                    e.target.src =
+                                                                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" fill="%23374151"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%239ca3af" font-size="10"%3ENo Image%3C/text%3E%3C/svg%3E';
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <div className="w-20 h-20 bg-gray-700 rounded-md flex items-center justify-center">
+                                                                <span className="text-xs text-gray-400">
+                                                                    No Image
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Product Details */}
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm text-gray-200 font-medium truncate">
+                                                            {item.title ?? item.name ?? 'Product'}
+                                                        </p>
+                                                        <div className="flex items-center gap-2 text-xs text-gray-400">
+                                                            <span>Qty: {item.quantity || 1}</span>
+                                                            <span>•</span>
+                                                            <span className="text-gray-300 font-semibold">
+                                                                {formatCurrency(item.price * (item.quantity || 1))}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             )}
