@@ -19,21 +19,21 @@ function Navbar() {
   const isAuthenticated = useSelector((state) => !!state.auth.user);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  
+
   const handleUserClick = () => setDropdownOpen((prev) => !prev);
-  
+
   const handleLogin = () => {
     setDropdownOpen(false);
     setMobileMenuOpen(false);
     navigate("/login");
   };
-  
+
   const handleLogout = () => {
     dispatch(logout());
     setDropdownOpen(false);
     setMobileMenuOpen(false);
   };
-  
+
   const handleSignup = () => {
     setDropdownOpen(false);
     setMobileMenuOpen(false);
@@ -124,6 +124,27 @@ function Navbar() {
                         {user_name?.name}
                       </span>
                     </div>
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-2 px-4 py-2 w-full hover:bg-gray-100 text-left"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      <FontAwesomeIcon icon={faUser} />
+                      <span>Profile</span>
+                    </Link>
+                    {user_name?.role === 'admin' && (
+                      <Link
+                        to="/admin"
+                        className="flex items-center gap-2 px-4 py-2 w-full hover:bg-gray-100 text-left text-blue-600"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span>Admin Panel</span>
+                      </Link>
+                    )}
                     <button
                       className="flex items-center gap-2 px-4 py-2 w-full hover:bg-gray-100 text-left"
                       onClick={handleLogout}
@@ -171,9 +192,8 @@ function Navbar() {
 
       {/* Mobile Slide-in Menu (80% height) */}
       <div
-        className={`fixed top-0 right-0 h-[80vh] w-72 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 shadow-2xl z-50 transform transition-transform duration-500 ease-in-out lg:hidden ${
-          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-[80vh] w-72 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 shadow-2xl z-50 transform transition-transform duration-500 ease-in-out lg:hidden ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
         style={{
           boxShadow: "-10px 0 30px rgba(0, 0, 0, 0.5)",
         }}
@@ -250,7 +270,7 @@ function Navbar() {
                     Account
                   </span>
                 </button>
-                
+
                 {/* Dropdown within mobile menu */}
                 {dropdownOpen && (
                   <div className="mt-2 ml-4 bg-white/10 backdrop-blur-sm rounded-lg py-2 text-base">
@@ -281,6 +301,27 @@ function Navbar() {
                             {user_name?.name || "User"}
                           </span>
                         </div>
+                        <Link
+                          to="/profile"
+                          className="flex items-center gap-2 px-4 py-2 w-full hover:bg-white/10 text-left text-white/90 hover:text-cyan-300 transition-all duration-200"
+                          onClick={closeMobileMenu}
+                        >
+                          <FontAwesomeIcon icon={faUser} />
+                          <span>Profile</span>
+                        </Link>
+                        {user_name?.role === 'admin' && (
+                          <Link
+                            to="/admin"
+                            className="flex items-center gap-2 px-4 py-2 w-full hover:bg-white/10 text-left text-cyan-300 hover:text-cyan-200 transition-all duration-200"
+                            onClick={closeMobileMenu}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>Admin Panel</span>
+                          </Link>
+                        )}
                         <button
                           className="flex items-center gap-2 px-4 py-2 w-full hover:bg-white/10 text-left text-white/90 hover:text-cyan-300 transition-all duration-200"
                           onClick={handleLogout}

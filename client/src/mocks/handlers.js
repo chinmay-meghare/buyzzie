@@ -3,6 +3,7 @@ import { productsData } from "./data/products";
 import { authHandlers } from "./handlers.auth";
 import { orderHandlers } from "./handlers.orders";
 import { userHandlers } from "./handlers.user";
+import { adminHandlers } from "./handlers.admin";
 
 // Helper function to filter products
 const filterProducts = (products, filters) => {
@@ -184,4 +185,5 @@ export const handlers = [
   ...authHandlers,
   ...orderHandlers,
   ...userHandlers,
+  ...adminHandlers,
 ];

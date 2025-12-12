@@ -11,9 +11,11 @@ import Profile from "../pages/Profile";
 import Login from "../pages/Login";
 import Logout from "../pages/Logout";
 import NotFound from "../pages/NotFound";
-import AdminPanel from "../pages/AdminPanel";
 import Signup from "../pages/Signup";
 import PrivateRoute from "./PrivateRoute";
+import PrivateAdminRoute from "./PrivateAdminRoute";
+import AdminLayout from "../components/admin/AdminLayout";
+import AdminDashboard from "../pages/admin/AdminDashboard";
 
 const AppRoutes = () => {
   return (
@@ -23,28 +25,41 @@ const AppRoutes = () => {
       <Route path="/collection" element={<Collection />} />
       <Route path="/product/:productId" element={<ProductDetails />} />
       <Route path="/cart" element={<Cart />} />
-      <Route 
-        path="/checkout" 
+      <Route
+        path="/checkout"
         element={
           <PrivateRoute>
             <Checkout />
           </PrivateRoute>
-        } 
+        }
       />
-      <Route 
-        path="/order-confirmation/:orderId" 
+      <Route
+        path="/order-confirmation/:orderId"
         element={
           <PrivateRoute>
             <OrderConfirmation />
           </PrivateRoute>
-        } 
+        }
       />
       <Route path="/profile" element={<Profile />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/logout" element={<Logout />} />
+
+      {/* Admin Routes */}
+      <Route
+        path="/admin/*"
+        element={
+          <PrivateAdminRoute>
+            <AdminLayout />
+          </PrivateAdminRoute>
+        }
+      >
+        <Route index element={<AdminDashboard />} />
+        {/* Additional admin routes will be added in later phases */}
+      </Route>
+
       <Route path="*" element={<NotFound />} />
-      {/* <Route path="/admin" element={user.role === "admin" ? <AdminPanel /> : <Navigate to="/login" />} /> */}
     </Routes>
   );
 };
