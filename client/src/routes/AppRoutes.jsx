@@ -16,6 +16,8 @@ import PrivateRoute from "./PrivateRoute";
 import PrivateAdminRoute from "./PrivateAdminRoute";
 import AdminLayout from "../components/admin/AdminLayout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import ProductList from "../pages/admin/ProductList";
+import ProductForm from "../pages/admin/ProductForm";
 
 const AppRoutes = () => {
   return (
@@ -56,6 +58,9 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<AdminDashboard />} />
+        <Route path="products" element={<ProductList />} />
+        <Route path="products/new" element={<ProductForm />} />
+        <Route path="products/:id/edit" element={<ProductForm />} />
         {/* Additional admin routes will be added in later phases */}
       </Route>
 

@@ -48,4 +48,55 @@ export const adminHandlers = [
       recentOrders,
     });
   }),
+
+  // GET /api/admin/products - Get all products
+  http.get('/api/admin/products', () => {
+    return HttpResponse.json(productsData);
+  }),
+
+  // GET /api/admin/products/:id - Get single product
+  http.get('/api/admin/products/:id', ({ params }) => {
+    const { id } = params;
+    const product = productsData.find(p => p.id === Number(id));
+    if (!product) return new HttpResponse(null, { status: 404 });
+    return HttpResponse.json(product);
+  }),
+
+  // POST /api/admin/products - Create product
+  http.post('/api/admin/products', async ({ request }) => {
+    const newProduct = await request.json();
+    newProduct.id = Math.max(...productsData.map(p => p.id)) + 1;
+    newProduct.rating = 0; // Default
+    
+    // In a real app we would save to DB. 
+    // For MSW, we can try to push to the array but it resets on reload unless we persist it.
+    // For this session, we'll verify it works in memory.
+    productsData.unshift(newProduct);
+    
+    return HttpResponse.json(newProduct, { status: 201 });
+  }),
+
+  // PUT /api/admin/products/:id - Update product
+  http.put('/api/admin/products/:id', async ({ params, request }) => {
+    const { id } = params;
+    const updates = await request.json();
+    const index = productsData.findIndex(p => p.id === Number(id));
+    
+    if (index === -1) return new HttpResponse(null, { status: 404 });
+    
+    productsData[index] = { ...productsData[index], ...updates };
+    return HttpResponse.json(productsData[index]);
+  }),
+
+  // DELETE /api/admin/products/:id - Delete product
+  http.delete('/api/admin/products/:id', ({ params }) => {
+    const { id } = params;
+    const index = productsData.findIndex(p => p.id === Number(id));
+    
+    if (index !== -1) {
+      productsData.splice(index, 1);
+    }
+    
+    return new HttpResponse(null, { status: 204 });
+  }),
 ];
