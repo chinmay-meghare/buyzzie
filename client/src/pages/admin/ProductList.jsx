@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import ProductTable from '../../components/admin/ProductTable';
 import ConfirmDialog from '../../components/admin/ConfirmDialog';
 import api from '../../services/axios';
+import { toast } from 'react-toastify';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
@@ -18,7 +19,7 @@ const ProductList = () => {
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10; // 10 items per page as requested (or 20 based on earlier prompt, user said 10 in some contexts, let's stick to 10 for better view)
+    const itemsPerPage = 10;
 
     // Delete modal state
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -36,6 +37,7 @@ const ProductList = () => {
             setError(null);
         } catch (err) {
             setError('Failed to load products. Please try again.');
+            toast.error('Failed to load products');
             console.error(err);
         } finally {
             setLoading(false);
@@ -56,9 +58,10 @@ const ProductList = () => {
             setProducts(products.filter(p => p.id !== productToDelete.id));
             setIsDeleteOpen(false);
             setProductToDelete(null);
+            toast.success('Product deleted successfully');
         } catch (err) {
             console.error('Failed to delete product', err);
-            alert('Failed to delete product');
+            toast.error('Failed to delete product');
         }
     };
 

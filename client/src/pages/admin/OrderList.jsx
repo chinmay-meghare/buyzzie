@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import OrderTable from '../../components/admin/OrderTable';
 import api from '../../services/axios';
+import { toast } from 'react-toastify';
 
 const OrderList = () => {
     const [orders, setOrders] = useState([]);
@@ -32,6 +33,7 @@ const OrderList = () => {
             setError(null);
         } catch (err) {
             setError('Failed to load orders. Please try again.');
+            toast.error('Failed to load orders');
             console.error(err);
         } finally {
             setLoading(false);

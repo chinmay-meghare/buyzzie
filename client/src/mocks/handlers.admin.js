@@ -136,4 +136,13 @@ export const adminHandlers = [
     
     return HttpResponse.json(mockDb.orders[orderIndex]);
   }),
+
+  // GET /api/admin/users - Get all registered users
+  http.get('/api/admin/users', () => {
+    const mockDb = db.read();
+    // Rule 20: Security Hygiene - Exclude sensitive data
+    const users = mockDb.users.map(({ password, ...user }) => user);
+    
+    return HttpResponse.json(users);
+  }),
 ];

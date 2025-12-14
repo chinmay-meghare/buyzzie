@@ -46,12 +46,12 @@ const OrderStatusDropdown = ({ orderId, currentStatus, onStatusChange }) => {
     const currentOption = statusOptions.find(opt => opt.value === status) || statusOptions[0];
 
     return (
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block text-center">
             <select
                 value={status}
                 onChange={handleChange}
                 disabled={loading}
-                className={`block w-full pl-3 pr-8 py-1.5 text-xs font-semibold rounded-full border-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 cursor-pointer transition-colors ${currentOption.color} appearance-none`}
+                className={`block w-full px-1 sm:px-2 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold rounded-full border-0 overflow-hidden truncate focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 cursor-pointer transition-colors ${currentOption.color} appearance-none`}
                 aria-label={`Change status for order ${orderId}`}
             >
                 {statusOptions.map((option) => (

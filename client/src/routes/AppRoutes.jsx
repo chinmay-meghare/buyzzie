@@ -19,6 +19,7 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import ProductList from "../pages/admin/ProductList";
 import ProductForm from "../pages/admin/ProductForm";
 import OrderList from "../pages/admin/OrderList";
+import CustomerList from "../pages/admin/CustomerList";
 
 const AppRoutes = () => {
   return (
@@ -63,6 +64,7 @@ const AppRoutes = () => {
         <Route path="products/new" element={<ProductForm />} />
         <Route path="products/:id/edit" element={<ProductForm />} />
         <Route path="orders" element={<OrderList />} />
+        <Route path="customers" element={<CustomerList />} />
         {/* Additional admin routes will be added in later phases */}
       </Route>
 
