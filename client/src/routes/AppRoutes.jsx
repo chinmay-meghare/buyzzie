@@ -18,6 +18,7 @@ import AdminLayout from "../components/admin/AdminLayout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import ProductList from "../pages/admin/ProductList";
 import ProductForm from "../pages/admin/ProductForm";
+import OrderList from "../pages/admin/OrderList";
 
 const AppRoutes = () => {
   return (
@@ -61,6 +62,7 @@ const AppRoutes = () => {
         <Route path="products" element={<ProductList />} />
         <Route path="products/new" element={<ProductForm />} />
         <Route path="products/:id/edit" element={<ProductForm />} />
+        <Route path="orders" element={<OrderList />} />
         {/* Additional admin routes will be added in later phases */}
       </Route>
 

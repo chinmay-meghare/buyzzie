@@ -99,4 +99,41 @@ export const adminHandlers = [
     
     return new HttpResponse(null, { status: 204 });
   }),
+
+  // GET /api/admin/orders - Get all orders
+  http.get('/api/admin/orders', () => {
+    const mockDb = db.read();
+    const orders = mockDb.orders || [];
+    
+    // Enrich orders with customer names
+    const enrichedOrders = orders.map(order => {
+      const user = mockDb.users.find(u => u.id === order.userId);
+      return {
+        ...order,
+        customerName: user?.name || 'Unknown Customer',
+        customerEmail: user?.email || 'N/A',
+      };
+    });
+    
+    // Sort by date desc
+    enrichedOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    return HttpResponse.json(enrichedOrders);
+  }),
+
+  // PUT /api/admin/orders/:id/status - Update order status
+  http.put('/api/admin/orders/:id/status', async ({ params, request }) => {
+    const { id } = params;
+    const { status } = await request.json();
+    const mockDb = db.read();
+    
+    const orderIndex = mockDb.orders.findIndex(o => o.id === id);
+    if (orderIndex === -1) return new HttpResponse(null, { status: 404 });
+    
+    // Update status
+    mockDb.orders[orderIndex].status = status;
+    db.write(mockDb);
+    
+    return HttpResponse.json(mockDb.orders[orderIndex]);
+  }),
 ];
