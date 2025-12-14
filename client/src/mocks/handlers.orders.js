@@ -216,8 +216,11 @@ export const orderHandlers = [
         );
       }
       
-      // Verify order belongs to user
-      if (order.userId !== userId) {
+      // Verify order belongs to user OR user is admin
+      const user = db.users.find(u => u.id === userId);
+      const isAdmin = user?.role === 'admin';
+
+      if (order.userId !== userId && !isAdmin) {
         return HttpResponse.json(
           { error: 'Unauthorized. You do not have access to this order.' },
           { status: 403 }
