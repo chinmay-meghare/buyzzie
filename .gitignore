@@ -2,9 +2,7 @@
 node_modules/
 
 # Ignore npm/yarn lock files in root (keep if needed in client)
-package-lock.json
-yarn.lock
-package.json
+
 
 # Ignore temp files
 .DS_Store
