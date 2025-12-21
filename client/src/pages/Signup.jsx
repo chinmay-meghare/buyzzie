@@ -62,6 +62,8 @@ export default function Signup() {
           <label className="block text-gray-300 mb-1">Name</label>
           <input
             name="name"
+            type="text"
+            autoComplete="name"
             value={form.name}
             onChange={onChange}
             className="w-full p-2 rounded bg-gray-700 text-white"
@@ -74,6 +76,8 @@ export default function Signup() {
           <label className="block text-gray-300 mb-1">Email</label>
           <input
             name="email"
+            type="email"
+            autoComplete="email"
             value={form.email}
             onChange={onChange}
             className="w-full p-2 rounded bg-gray-700 text-white"
@@ -87,6 +91,7 @@ export default function Signup() {
           <input
             type="password"
             name="password"
+            autoComplete="new-password"
             value={form.password}
             onChange={onChange}
             className="w-full p-2 rounded bg-gray-700 text-white"
@@ -100,6 +105,7 @@ export default function Signup() {
           <input
             type="password"
             name="confirmPassword"
+            autoComplete="new-password"
             value={form.confirmPassword}
             onChange={onChange}
             className="w-full p-2 rounded bg-gray-700 text-white"

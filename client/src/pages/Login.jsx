@@ -42,12 +42,12 @@ const Login = () => {
         <h2 className="text-2xl font-bold mb-6 text-white">Login</h2>
         <div className="mb-4">
           <label className="block text-gray-300 mb-1">Email</label>
-          <input name="email" value={form.email} onChange={onChange} className="w-full p-2 rounded bg-gray-700 text-white" />
+          <input name="email" type="email" autoComplete="email" value={form.email} onChange={onChange} className="w-full p-2 rounded bg-gray-700 text-white" />
           {errors.email && <div className="text-red-400 text-sm mt-1">{errors.email}</div>}
         </div>
         <div className="mb-4">
           <label className="block text-gray-300 mb-1">Password</label>
-          <input type="password" name="password" value={form.password} onChange={onChange} className="w-full p-2 rounded bg-gray-700 text-white" />
+          <input type="password" name="password" autoComplete="current-password" value={form.password} onChange={onChange} className="w-full p-2 rounded bg-gray-700 text-white" />
           {errors.password && <div className="text-red-400 text-sm mt-1">{errors.password}</div>}
         </div>
         <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded" disabled={status === 'pending'}>
