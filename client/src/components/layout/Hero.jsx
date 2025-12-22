@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import heroImageMobile from "../../assets/images/pexels-samad-ismayilov.mobile.jpg";
+import heroImageDesktop from "../../assets/images/pexels-samad-ismayilov.jpg";
 
 function Hero() {
   return (
@@ -8,14 +10,14 @@ function Hero() {
       <picture>
         <source
           media="(max-width: 1075px)"
-          srcSet="/src/assets/images/pexels-samad-ismayilov.mobile.jpg"
+          srcSet={heroImageMobile}
         />
         <source
           media="(min-width: 1076px)"
-          srcSet="/src/assets/images/pexels-samad-ismayilov.jpg"
+          srcSet={heroImageDesktop}
         />
         <img
-          src="/src/assets/images/pexels-samad-ismayilov.jpg"
+          src={heroImageDesktop}
           alt="Hero Banner - Shop the Future Collection"
           className="w-full h-full object-cover object-[80%_center]"
           loading="eager"
