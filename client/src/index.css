@@ -16,10 +16,6 @@
 }
 
 @layer components {
-  .hero-bg {
-    background-image: url('./assets/images/pexels-samad-ismayilov.jpg');
-  }
-
   .input-text {
     @apply text-black;
   }

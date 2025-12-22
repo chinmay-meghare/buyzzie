@@ -8,8 +8,7 @@ import { Provider } from "react-redux";
 import { store } from "./app/store";
 
 async function enableMocking() {
-  // Enable MSW in both development and production
-  // This allows the app to work on Netlify with mock data
+  // Enable MSW in both development and production & it is allowing the app to work on Netlify with mockdata
   const { worker } = await import("./mocks/browser");
   return worker.start({
     onUnhandledRequest: "bypass",
