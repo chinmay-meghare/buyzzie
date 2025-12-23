@@ -1,6 +1,6 @@
 # Buyzzie
 
-![Netlify Status](https://api.netlify.com/api/v1/badges/b508f654-206e-4127-949e-b855928f6e80/deploy-status)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bd9747f6-3f0e-4021-9076-53c3ccfe810a/deploy-status)](https://app.netlify.com/projects/buyzzie/deploys)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![React](https://img.shields.io/badge/React-18-61dafb.svg?logo=react)
 ![Vite](https://img.shields.io/badge/Vite-5-646cff.svg?logo=vite)
