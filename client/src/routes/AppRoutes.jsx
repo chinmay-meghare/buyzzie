@@ -20,6 +20,7 @@ import ProductList from "../pages/admin/ProductList";
 import ProductForm from "../pages/admin/ProductForm";
 import OrderList from "../pages/admin/OrderList";
 import CustomerList from "../pages/admin/CustomerList";
+import Categories from "../pages/Categories";
 
 const AppRoutes = () => {
   return (
@@ -29,6 +30,7 @@ const AppRoutes = () => {
       <Route path="/collection" element={<Collection />} />
       <Route path="/product/:productId" element={<ProductDetails />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/categories" element={<Categories />} />
       <Route
         path="/checkout"
         element={

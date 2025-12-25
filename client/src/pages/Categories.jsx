@@ -15,7 +15,6 @@ const Categories = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <Navbar />
       <main className="py-16 px-4">
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl font-bold text-center mb-4">

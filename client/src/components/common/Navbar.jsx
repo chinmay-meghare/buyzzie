@@ -69,17 +69,14 @@ function Navbar() {
         {/* Desktop Navigation */}
         <ul className="hidden lg:flex gap-8 text-lg font-medium text-white/90">
           <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
-            <Link to="/" className="hover:text-cyan-300">
-              Home
-            </Link>
-          </li>
-          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             <Link to="/collection" className="hover:text-cyan-300">
               Shop
             </Link>
           </li>
           <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
-            Categories
+            <Link to="/categories" className="hover:text-cyan-300">
+              Categories
+            </Link>
           </li>
           <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             New Arrivals
