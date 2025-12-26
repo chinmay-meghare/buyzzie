@@ -65,7 +65,7 @@ const CategoryPreview = () => {
                   <h3 className="text-2xl font-semibold text-white mb-1">
                     {cat.name}
                   </h3>
-                  <p className="text-gray-400 mb-6">{cat.items} Items</p>
+                  {/* <p className="text-gray-400 mb-6">{cat.items} Items</p> */}
                 </div>
                 <Link to="/collection">
                   <button className="w-full py-2 rounded-lg border border-[#23262b] text-white font-semibold transition-colors duration-200 hover:bg-[#23204a]">
