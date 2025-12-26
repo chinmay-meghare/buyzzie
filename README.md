@@ -29,8 +29,7 @@ Designed for performance and aesthetics, Buyzzie solves the problem of testing a
 
 Experience the live application here: **[https://buyzzie.netlify.app](https://buyzzie.netlify.app)**
 
-![Buyzzie Home Page](./client/src/assets/homepage-screenshot.png)
-*(Note: Please ensure a screenshot is placed at this path or update the link)*
+![Buyzzie Home Page](./client/src/assets/images/homepage-screenshot.png)
 
 ---
 
