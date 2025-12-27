@@ -4,6 +4,7 @@ import { authHandlers } from "./handlers.auth";
 import { orderHandlers } from "./handlers.orders";
 import { userHandlers } from "./handlers.user";
 import { adminHandlers } from "./handlers.admin";
+import { assets } from "../assets/assets";
 
 // Helper function to filter products
 const filterProducts = (products, filters) => {
@@ -152,31 +153,36 @@ export const handlers = [
         id: 1,
         name: "Clothes",
         slug: "clothes",
-        image: "https://i.imgur.com/QkIa5tT.jpeg",
+        image: assets.category_clothes,
+        subtitle: "Fashion & Apparel",
       },
       {
         id: 2,
         name: "Electronics",
         slug: "electronics",
-        image: "https://i.imgur.com/ZANVnHE.jpeg",
+        image: assets.category_electronics,
+        subtitle: "Gadgets & Gear",
       },
       {
         id: 3,
         name: "Furniture",
         slug: "furniture",
-        image: "https://i.imgur.com/Qphac99.jpeg",
+        image: assets.category_furniture,
+        subtitle: "Home & Living",
       },
       {
         id: 4,
         name: "Shoes",
         slug: "shoes",
-        image: "https://i.imgur.com/qNOjJje.jpeg",
+        image: assets.category_shoes,
+        subtitle: "Footwear & Accessories",
       },
       {
         id: 5,
         name: "Miscellaneous",
         slug: "miscellaneous",
-        image: "https://i.imgur.com/BG8J0Fj.jpg",
+        image: assets.category_miscellaneous,
+        subtitle: "Various Goods",
       },
     ];
 
