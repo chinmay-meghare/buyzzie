@@ -10,7 +10,10 @@ function Home() {
     <div className="min-h-screen bg-[#0a0a0a]">
       <Hero />
       <PromotionBanner />
-      <CategoryPreview />
+      <CategoryPreview
+        title="Shop by Category"
+        subtitle="Explore our carefully curated collections designed for the modern lifestyle"
+      />
       <FeaturedProducts />
       <SubscribeSection />
     </div>

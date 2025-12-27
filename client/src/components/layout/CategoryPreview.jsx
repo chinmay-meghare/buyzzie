@@ -1,21 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { assets } from "../../assets/assets";
-import CategoryGrid from "./CategoryGrid";
+import BentoGrid from "./BentoGrid";
 
-const CategoryPreview = () => {
-  return (
-    <section className="w-full bg-[#10318] py-16 px-4">
-      <div className="max-w-7xl mx-auto flex flex-col items-center">
-
-        {/* CategoryGrid */}
-        <CategoryGrid
-          heading="Shop by Category"
-          subheading="Explore our carefully curated collections designed for the modern lifestyle"
-        />
-      </div>
-    </section>
-  );
+/**
+ * CategoryPreview Component
+ * Wrapper component for the BentoGrid that accepts dynamic title and subtitle
+ * This allows the same component to be used on different pages with different headings
+ * 
+ * @param {Object} props
+ * @param {string} props.title - Main heading for the section
+ * @param {string} props.subtitle - Subheading for the section
+ */
+const CategoryPreview = ({ title, subtitle }) => {
+  return <BentoGrid title={title} subtitle={subtitle} />;
 };
 
 export default CategoryPreview;
