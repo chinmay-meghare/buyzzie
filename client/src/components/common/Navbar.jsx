@@ -19,6 +19,18 @@ function Navbar() {
   const isAuthenticated = useSelector((state) => !!state.auth.user);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  // Detect scroll position
+  React.useEffect(() => {
+    const handleScroll = () => {
+      // Change background after scrolling past hero section (~600px)
+      setIsScrolled(window.scrollY > 600);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleUserClick = () => setDropdownOpen((prev) => !prev);
 
@@ -54,7 +66,12 @@ function Navbar() {
 
   return (
     <>
-      <nav className="w-full border-b border-gray-700 flex items-center justify-between px-6 md:px-12 py-4 bg-transparent relative z-50">
+      <nav
+        className={`fixed top-0 left-0 w-full flex items-center justify-between px-6 md:px-12 py-4 z-50 transition-all duration-300 ${isScrolled
+            ? 'bg-black/40 backdrop-blur-md border-gray-700/50'
+            : ''
+          }`}
+      >
         {/* Logo */}
         <div className="text-3xl font-bold tracking-wide">
           <Link to="/">
@@ -68,20 +85,20 @@ function Navbar() {
 
         {/* Desktop Navigation */}
         <ul className="hidden lg:flex gap-8 text-lg font-medium text-white/90">
-          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
+          <li className="text-black hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             <Link to="/collection" className="hover:text-cyan-300">
               Shop
             </Link>
           </li>
-          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
+          <li className="text-black hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             <Link to="/categories" className="hover:text-cyan-300">
               Categories
             </Link>
           </li>
-          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
+          <li className="text-black hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             New Arrivals
           </li>
-          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
+          <li className="text-black hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             About
           </li>
         </ul>
