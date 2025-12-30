@@ -84,21 +84,21 @@ function Navbar() {
         </div>
 
         {/* Desktop Navigation */}
-        <ul className="hidden lg:flex gap-8 text-lg font-medium text-white/90">
-          <li className="text-black hover:text-cyan-300 cursor-pointer transition-colors duration-200">
+        <ul className="hidden lg:flex gap-8 text-xl font-medium text-white/90">
+          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             <Link to="/collection" className="hover:text-cyan-300">
               Shop
             </Link>
           </li>
-          <li className="text-black hover:text-cyan-300 cursor-pointer transition-colors duration-200">
+          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             <Link to="/categories" className="hover:text-cyan-300">
               Categories
             </Link>
           </li>
-          <li className="text-black hover:text-cyan-300 cursor-pointer transition-colors duration-200">
+          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             New Arrivals
           </li>
-          <li className="text-black hover:text-cyan-300 cursor-pointer transition-colors duration-200">
+          <li className="hover:text-cyan-300 cursor-pointer transition-colors duration-200">
             About
           </li>
         </ul>

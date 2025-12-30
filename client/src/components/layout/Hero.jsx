@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import heroImageMobile from "../../assets/images/pexels-samad-ismayilov.mobile.jpg";
-import heroImageDesktop from "../../assets/images/pexels-samad-ismayilov.jpg";
+import heroImageMobile from "../../assets/images/freepik-model-mobile-image.jpg";
+import heroImageDesktop from "../../assets/images/freepik-model-image.jpg";
 
 function Hero() {
   return (
@@ -32,14 +32,14 @@ function Hero() {
       <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-12 py-10 text-white">
         <div className="relative z-10 max-w-3xl mt-12 md:mt-24">
           <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
-            Shop the Future.
+            Level Up Your Look.
             <br />
-            Wear the Vibe.
+            Built for Style.
           </h1>
           <p className="text-lg md:text-xl text-purple-100 mb-8 md:mb-10">
-            Curated essentials for the digital generation.
+            Fresh drops for the digital era.
             <br />
-            Express yourself through our premium collection.
+            Grab the latest essentials and show the world who you are.
           </p>
           <div className="flex flex-row max-[500px]:flex-col gap-4 md:gap-6">
             <Link to="/collection">
