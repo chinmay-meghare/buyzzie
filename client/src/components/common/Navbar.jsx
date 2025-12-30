@@ -12,6 +12,7 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import CartBadge from "./CartBadge";
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -68,8 +69,8 @@ function Navbar() {
     <>
       <nav
         className={`fixed top-0 left-0 w-full flex items-center justify-between px-6 md:px-12 py-4 z-50 transition-all duration-300 ${isScrolled
-            ? 'bg-black/40 backdrop-blur-md border-gray-700/50'
-            : ''
+          ? 'bg-black/40 backdrop-blur-md border-gray-700/50'
+          : ''
           }`}
       >
         {/* Logo */}
@@ -174,6 +175,7 @@ function Navbar() {
           <Link to="/cart">
             <span className="relative cursor-pointer hover:text-cyan-300 transition-colors duration-200">
               <FontAwesomeIcon icon={faCartShopping} />
+              <CartBadge />
             </span>
           </Link>
         </div>
@@ -183,6 +185,7 @@ function Navbar() {
           <Link to="/cart">
             <span className="relative cursor-pointer hover:text-cyan-300 transition-colors duration-200">
               <FontAwesomeIcon icon={faCartShopping} />
+              <CartBadge />
             </span>
           </Link>
           <button
