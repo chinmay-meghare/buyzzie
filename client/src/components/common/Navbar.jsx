@@ -21,6 +21,7 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const dropdownRef = React.useRef(null);
 
   // Detect scroll position
   React.useEffect(() => {
@@ -32,6 +33,24 @@ function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    // Only add listener if dropdown is open
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   const handleUserClick = () => setDropdownOpen((prev) => !prev);
 
@@ -106,12 +125,12 @@ function Navbar() {
 
         {/* Desktop Icons */}
         <div className="hidden lg:flex items-center gap-6 text-white text-2xl">
-          <span className="relative">
+          <span className="relative" ref={dropdownRef}>
             <span className="cursor-pointer hover:text-cyan-300 transition-colors duration-200" onClick={handleUserClick}>
               <FontAwesomeIcon icon={faUser} />
             </span>
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg py-2 z-10 text-base text-gray-800">
+              <div className="absolute right-0 mt-1 w-40 bg-white rounded shadow-lg py-2 z-10 text-base text-gray-800">
                 {!isAuthenticated ? (
                   <>
                     <button
