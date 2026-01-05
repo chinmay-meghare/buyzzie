@@ -7,7 +7,7 @@ import CategoryPreview from "../components/layout/CategoryPreview";
  */
 const Categories = () => {
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen pt-24 bg-[#0a0a0a]">
       <CategoryPreview
         title="Categories"
         subtitle="Browse products by category"

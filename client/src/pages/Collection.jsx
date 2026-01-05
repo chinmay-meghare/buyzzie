@@ -73,12 +73,20 @@ function Collection() {
   console.log("Collection render:", { productsArray, metaData, filtersData });
 
   return (
-    <div className="min-h-screen bg-black">
-      <div className="p-6">
+    <div className="min-h-screen">
+      <div className="pt-36 px-6">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-50 mb-6">
-            Product Collection
-          </h1>
+           {/* Header Section */}
+                <div className="flex flex-col items-center mb-12">
+                    <h2 className="text-4xl md:text-6xl font-bold text-center mb-4">
+                        <span className="bg-gradient-to-r from-[#ebebeb] to-[#9379fc] bg-clip-text text-transparent">
+                            Product Collection
+                        </span>
+                    </h2>
+                    <p className="text-lg md:text-xl text-gray-400 text-center max-w-2xl">
+                        Browse our curated collection of products
+                    </p>
+                </div>
 
           {/* Filters */}
           <ProductFilters />

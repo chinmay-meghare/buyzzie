@@ -27,7 +27,7 @@ function Navbar() {
   React.useEffect(() => {
     const handleScroll = () => {
       // Change background after scrolling past hero section (~600px)
-      setIsScrolled(window.scrollY > 600);
+      setIsScrolled(window.scrollY > 200);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -87,7 +87,7 @@ function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full flex items-center justify-between px-6 md:px-12 py-4 z-50 transition-all duration-300 ${isScrolled
+        className={`fixed top-0 left-0 w-full flex items-center justify-between px-6 md:px-12 py-4 z-500 transition-all duration-300 ${isScrolled
           ? 'bg-black/40 backdrop-blur-md border-gray-700/50'
           : ''
           }`}

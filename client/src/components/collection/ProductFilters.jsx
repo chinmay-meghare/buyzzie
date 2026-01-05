@@ -125,7 +125,7 @@ const ProductFilters = () => {
           <label className="block text-sm font-medium text-gray-50 mb-2">
             Categories
           </label>
-          <div className="space-y-2 max-h-32 overflow-y-auto">
+          <div className="space-y-2 max-h-32">
             {safeCategories.length > 0 ? (
               safeCategories.map((category) => (
                 <label key={category.id} className="flex items-center">

@@ -78,7 +78,7 @@ const ProductCard = ({ product }) => {
       {/* Notification Banner */}
       {notification && (
         <div
-          className={`fixed top-4 right-4 z-50 p-3 rounded-lg shadow-lg text-sm ${
+          className={`fixed top-4 right-4 p-3 rounded-lg shadow-lg text-sm ${
             notification.type === 'success'
               ? 'bg-green-600 text-white'
               : 'bg-red-600 text-white'
