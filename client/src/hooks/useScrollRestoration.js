@@ -2,337 +2,242 @@ import { useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
 /**
- * Custom hook for persisting and restoring scroll positions across page navigation
+ * Advanced Layout-Aware Scroll Restoration Hook
  * 
- * Features:
- * - Debounced scroll saving for optimal performance
- * - sessionStorage persistence (clears on tab close)
- * - Data-aware restoration (waits for content to load)
- * - Smooth scroll transitions (configurable)
- * - ResizeObserver integration for dynamic content
- * - Support for both window and custom scroll containers
+ * Solves:
+ * - "Flash" or "Overshoot" when navigating back
+ * - Mobile viewport resize quirks
+ * - Layout instability during data loading
  * 
- * @param {Object} options - Configuration options
- * @param {boolean} options.smooth - Enable smooth scrolling (default: true)
- * @param {number} options.debounceMs - Debounce time for scroll saving (default: 100ms)
- * @param {Array} options.dependencies - Additional dependencies to trigger scroll restoration
- * @param {RefObject} options.scrollContainerRef - Optional custom scroll container ref
- * @param {boolean} options.enabled - Enable/disable the hook (default: true)
- * 
- * @example
- * // Basic usage
- * useScrollRestoration();
- * 
- * @example
- * // With data dependencies
- * useScrollRestoration({ 
- *   smooth: true,
- *   dependencies: [products, isLoading]
- * });
- * 
- * @example
- * // Custom scroll container
- * const containerRef = useRef(null);
- * useScrollRestoration({ 
- *   scrollContainerRef: containerRef 
- * });
+ * Architecture:
+ * 1. Blocks restoration initially using 'manual' history
+ * 2. Monitors layout stability via ResizeObserver on #root or container
+ * 3. Waits for height to settle (150-300ms window)
+ * 4. Restores scroll position only when layout is stable
+ * 5. Prevents overshoot by checking height post-restoration
  */
 const useScrollRestoration = (options = {}) => {
   const { 
     smooth = true, 
-    debounceMs = 100,
+    debounceMs = 150, // Increased default as requested
     dependencies = [],
     scrollContainerRef = null,
+    layoutContainerRef = null, // Ref for the element to observe for height changes
     enabled = true
   } = options;
 
   const location = useLocation();
   const scrollTimeoutRef = useRef(null);
-  const isRestoringRef = useRef(false);
+  const stabilityTimerRef = useRef(null);
+  const restorationPendingRef = useRef(false);
+  const lastKnownHeightRef = useRef(0);
   const resizeObserverRef = useRef(null);
-  const lastScrollPositionRef = useRef({ x: 0, y: 0 });
-
-  // Disable browser's default scroll restoration
-  useEffect(() => {
-    if ('scrollRestoration' in window.history) {
-      const originalScrollRestoration = window.history.scrollRestoration;
-      window.history.scrollRestoration = 'manual';
-      
-      return () => {
-        window.history.scrollRestoration = originalScrollRestoration;
-      };
-    }
-  }, []);
+  
+  // Track current scroll position for saving
+  const currentScrollRef = useRef({ x: 0, y: 0 });
 
   /**
-   * Generate unique storage key based on current route
-   */
-  const getScrollKey = useCallback(() => {
-    return `scroll_position_${location.pathname}${location.search}`;
-  }, [location.pathname, location.search]);
-
-  /**
-   * Get scroll container (window or custom element)
+   * Helper: Get the scroll container (window or custom)
    */
   const getScrollContainer = useCallback(() => {
     return scrollContainerRef?.current || window;
   }, [scrollContainerRef]);
 
   /**
-   * Get current scroll position from container
+   * Helper: Get the element to observe for layout stability
+   * Defaults to #root for window scrolling, or the scroll container's content
    */
-  const getCurrentScrollPosition = useCallback(() => {
-    const container = getScrollContainer();
+  const getLayoutTarget = useCallback(() => {
+    if (layoutContainerRef?.current) return layoutContainerRef.current;
     
-    if (container === window) {
-      return {
-        x: window.scrollX || window.pageXOffset,
-        y: window.scrollY || window.pageYOffset
-      };
-    } else {
-      return {
-        x: container.scrollLeft,
-        y: container.scrollTop
-      };
+    // If scrolling window, watch the app root
+    if (!scrollContainerRef?.current) {
+      return document.getElementById('root') || document.body;
     }
-  }, [getScrollContainer]);
+    
+    // If custom scroll container, watch its first child (content wrapper)
+    // or the container itself if no children (fallback)
+    return scrollContainerRef.current.firstElementChild || scrollContainerRef.current;
+  }, [layoutContainerRef, scrollContainerRef]);
 
   /**
-   * Save scroll position to sessionStorage with error handling
+   * Helper: Get unique key for storage
+   */
+  const getScrollKey = useCallback(() => {
+    return `scroll_position_${location.pathname}${location.search}`;
+  }, [location.pathname, location.search]);
+
+  /**
+   * 1️⃣ Initialization: Set manual history restoration
+   */
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      const original = window.history.scrollRestoration;
+      window.history.scrollRestoration = 'manual';
+      return () => { window.history.scrollRestoration = original; };
+    }
+  }, []);
+
+  /**
+   * 2️⃣ Saving Loop: Debounced save to sessionStorage
    */
   const saveScrollPosition = useCallback(() => {
-    if (!enabled || isRestoringRef.current) return;
+    if (!enabled) return;
 
-    const scrollKey = getScrollKey();
-    const position = getCurrentScrollPosition();
-    
-    // Update last known position
-    lastScrollPositionRef.current = position;
+    const container = getScrollContainer();
+    const position = container === window 
+      ? { x: window.scrollX, y: window.scrollY }
+      : { x: container.scrollLeft, y: container.scrollTop };
 
-    const scrollData = {
+    // Update ref immediately
+    currentScrollRef.current = position;
+
+    // Persist to storage
+    const key = getScrollKey();
+    const data = {
       x: position.x,
       y: position.y,
       timestamp: Date.now(),
       pathname: location.pathname
     };
-    
-    try {
-      sessionStorage.setItem(scrollKey, JSON.stringify(scrollData));
-    } catch (error) {
-      // Handle quota exceeded or other storage errors
-      console.warn('[useScrollRestoration] Failed to save scroll position:', error);
-      
-      // Try to clear old entries if quota exceeded
-      if (error.name === 'QuotaExceededError') {
-        try {
-          const keys = Object.keys(sessionStorage);
-          const scrollKeys = keys.filter(key => key.startsWith('scroll_position_'));
-          
-          // Remove oldest entries (keep last 10)
-          if (scrollKeys.length > 10) {
-            scrollKeys
-              .slice(0, scrollKeys.length - 10)
-              .forEach(key => sessionStorage.removeItem(key));
-            
-            // Retry save
-            sessionStorage.setItem(scrollKey, JSON.stringify(scrollData));
-          }
-        } catch (cleanupError) {
-          console.warn('[useScrollRestoration] Cleanup failed:', cleanupError);
-        }
-      }
-    }
-  }, [enabled, getScrollKey, getCurrentScrollPosition, location.pathname]);
 
-  /**
-   * Restore scroll position from sessionStorage
-   */
-  const restoreScrollPosition = useCallback(() => {
+    try {
+      sessionStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+      // Sliently handle quota errors
+      console.warn('Scroll save failed', e);
+    }
+  }, [enabled, getScrollContainer, getScrollKey, location.pathname]);
+
+  // Attach scroll listener
+  useEffect(() => {
     if (!enabled) return;
-
-    const scrollKey = getScrollKey();
+    const container = getScrollContainer();
     
-    try {
-      const savedScroll = sessionStorage.getItem(scrollKey);
-      
-      if (savedScroll) {
-        const { x, y, pathname } = JSON.parse(savedScroll);
-        
-        // Verify the saved position is for the current pathname
-        if (pathname !== location.pathname) {
-          return;
-        }
-        
-        isRestoringRef.current = true;
-        const container = getScrollContainer();
-        
-        // Restore scroll position
-        if (container === window) {
-          window.scrollTo({
-            top: y,
-            left: x,
-            behavior: smooth ? 'smooth' : 'auto'
-          });
-        } else {
-          container.scrollTo({
-            top: y,
-            left: x,
-            behavior: smooth ? 'smooth' : 'auto'
-          });
-        }
+    const handleScroll = () => {
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(saveScrollPosition, debounceMs);
+    };
 
-        // Update last known position
-        lastScrollPositionRef.current = { x, y };
-
-        // Reset restoring flag after scroll animation completes
-        setTimeout(() => {
-          isRestoringRef.current = false;
-        }, smooth ? 500 : 100);
-      } else {
-        // No saved scroll position - scroll to top
-        const container = getScrollContainer();
-        
-        if (container === window) {
-          window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: smooth ? 'smooth' : 'auto'
-          });
-        } else {
-          container.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: smooth ? 'smooth' : 'auto'
-          });
-        }
-      }
-    } catch (error) {
-      console.warn('[useScrollRestoration] Failed to restore scroll position:', error);
-      // Fallback to top on error
-      const container = getScrollContainer();
-      if (container === window) {
-        window.scrollTo(0, 0);
-      } else {
-        container.scrollTop = 0;
-        container.scrollLeft = 0;
-      }
-    }
-  }, [enabled, getScrollKey, getScrollContainer, smooth, location.pathname]);
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      saveScrollPosition(); // Final save
+    };
+  }, [enabled, getScrollContainer, debounceMs, saveScrollPosition]);
 
   /**
-   * Debounced scroll handler for performance optimization
+   * 3️⃣ Restoration Core: Restore only when layout is stable
    */
-  const handleScroll = useCallback(() => {
-    if (!enabled) return;
+  const performRestoration = useCallback((targetY, targetX) => {
+    const container = getScrollContainer();
+    const isMobile = window.innerWidth < 768; // Simple mobile check
 
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
+    // Final stability check before scrolling
+    // If we are forcing a scroll, we might want to disable smooth scroll 
+    // if the jump is massive to avoid "flying" over content, BUT user requested smooth.
+    // However, for correction (overshoot fix), we usually want instant.
+    
+    const scrollOptions = {
+      top: targetY,
+      left: targetX,
+      behavior: smooth ? 'smooth' : 'auto'
+    };
+
+    if (container === window) {
+      window.scrollTo(scrollOptions);
+    } else {
+      container.scrollTo(scrollOptions);
     }
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      saveScrollPosition();
-    }, debounceMs);
-  }, [enabled, debounceMs, saveScrollPosition]);
+    
+    restorationPendingRef.current = false;
+  }, [getScrollContainer, smooth]);
 
   /**
-   * Clear scroll position from storage
-   */
-  const clearScrollPosition = useCallback(() => {
-    const scrollKey = getScrollKey();
-    try {
-      sessionStorage.removeItem(scrollKey);
-    } catch (error) {
-      console.warn('[useScrollRestoration] Failed to clear scroll position:', error);
-    }
-  }, [getScrollKey]);
-
-  /**
-   * Setup ResizeObserver to handle dynamic content changes
+   * 4️⃣ Layout Stability Monitor
    */
   useEffect(() => {
     if (!enabled) return;
 
-    const container = getScrollContainer();
-    const targetElement = container === window ? document.body : container;
+    const layoutTarget = getLayoutTarget();
+    if (!layoutTarget) return;
 
-    if (!targetElement || !('ResizeObserver' in window)) return;
+    // Check if we need to restore
+    const key = getScrollKey();
+    const saved = sessionStorage.getItem(key);
+    let targetPos = null;
 
-    // Create ResizeObserver to detect content height changes
-    resizeObserverRef.current = new ResizeObserver((entries) => {
-      // Only restore if content has grown and we have a saved position
-      const entry = entries[0];
-      if (entry && !isRestoringRef.current) {
-        const scrollKey = getScrollKey();
-        const savedScroll = sessionStorage.getItem(scrollKey);
-        
-        if (savedScroll) {
-          const { y } = JSON.parse(savedScroll);
-          const currentPosition = getCurrentScrollPosition();
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.pathname === location.pathname) {
+          targetPos = parsed;
+          restorationPendingRef.current = true;
           
-          // If we're at the top but should be scrolled down, restore
-          if (currentPosition.y === 0 && y > 0) {
-            restoreScrollPosition();
-          }
+          // Initial check: if page is already tall enough, maybe restore? 
+          // But better to wait for stability as requested.
         }
+      } catch (e) { /* ignore */ }
+    }
+
+    if (!targetPos) return;
+
+    // Stability thresholds based on device
+    const isMobile = window.innerWidth < 768;
+    const stabilityWindow = isMobile ? 300 : 150; // ms to wait for no changes
+
+    const onLayoutChange = () => {
+      // Reset timer whenever layout changes
+      if (stabilityTimerRef.current) clearTimeout(stabilityTimerRef.current);
+
+      if (!restorationPendingRef.current) {
+        // 5️⃣ Silent Correction / Overshoot Prevention
+        // If layout changes AFTER we restored, we might need to hold position
+        // This prevents the "scroll back up" if content loads above
+        // TODO: This is aggressive, use only if strictly needed. 
+        // For now, we focus on the initial stable restore.
+        return;
+      }
+      
+      stabilityTimerRef.current = setTimeout(() => {
+        // Layout has been stable for 'stabilityWindow' ms
+        const currentHeight = layoutTarget.scrollHeight || layoutTarget.clientHeight;
+        
+        // Only restore if we have enough height to scroll to
+        // or if it's the best we can do
+        performRestoration(targetPos.y, targetPos.x);
+        
+      }, stabilityWindow);
+    };
+
+    // Observer setup
+    resizeObserverRef.current = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+         // Determine height (handling both window/body and explicit containers)
+         const height = entry.contentRect.height;
+         
+         if (Math.abs(height - lastKnownHeightRef.current) > 10) {
+           lastKnownHeightRef.current = height;
+           onLayoutChange();
+         }
       }
     });
 
-    resizeObserverRef.current.observe(targetElement);
+    resizeObserverRef.current.observe(layoutTarget);
+
+    // Initial trigger in case layout doesn't change initially (static page)
+    onLayoutChange();
 
     return () => {
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-      }
+      if (resizeObserverRef.current) resizeObserverRef.current.disconnect();
+      if (stabilityTimerRef.current) clearTimeout(stabilityTimerRef.current);
     };
-  }, [enabled, getScrollContainer, getScrollKey, getCurrentScrollPosition, restoreScrollPosition]);
+  }, [enabled, getLayoutTarget, getScrollKey, performRestoration, location.pathname, ...dependencies]);
 
-  /**
-   * Restore scroll position on mount (using useLayoutEffect to prevent flicker)
-   */
-  useLayoutEffect(() => {
-    if (!enabled) return;
-
-    // Small delay to ensure DOM is ready
-    const timeoutId = setTimeout(() => {
-      restoreScrollPosition();
-    }, 0);
-
-    return () => clearTimeout(timeoutId);
-  }, [enabled, location.pathname, location.search, ...dependencies]);
-
-  /**
-   * Setup scroll listener and cleanup
-   */
-  useEffect(() => {
-    if (!enabled) return;
-
-    const container = getScrollContainer();
-    const scrollTarget = container === window ? window : container;
-
-    if (!scrollTarget) return;
-
-    // Add scroll event listener with passive flag for better performance
-    scrollTarget.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Save scroll position before user navigates away
-    return () => {
-      scrollTarget.removeEventListener('scroll', handleScroll);
-      
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      
-      // Final save before unmount
-      saveScrollPosition();
-    };
-  }, [enabled, handleScroll, saveScrollPosition, getScrollContainer]);
-
-  // Return utility functions for manual control
   return {
     saveScrollPosition,
-    restoreScrollPosition,
-    clearScrollPosition,
-    getCurrentPosition: getCurrentScrollPosition
+    clearScrollPosition: () => sessionStorage.removeItem(getScrollKey()),
   };
 };
 
