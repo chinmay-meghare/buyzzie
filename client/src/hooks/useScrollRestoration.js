@@ -2,13 +2,13 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 /**
- * Production-Ready Scroll Restoration Hook
+ * Bulletproof Scroll Restoration Hook
  * 
- * Handles:
- * - Image loading delays (BentoGrid, lazy images, etc.)
- * - Dynamic content height changes
- * - Instant restoration without visual flash
- * - Works with any layout structure
+ * Solves:
+ * - BentoGrid flicker on navigation
+ * - Race conditions with fast-loading local images
+ * - Layout calculation timing issues
+ * - Inconsistent scroll positions
  */
 const useScrollRestoration = (options = {}) => {
   const { 
@@ -20,8 +20,6 @@ const useScrollRestoration = (options = {}) => {
   const saveTimeoutRef = useRef(null);
   const isRestoringRef = useRef(false);
   const hasRestoredRef = useRef(false);
-  const restoreAttemptRef = useRef(0);
-  const maxAttemptsRef = useRef(20); // Try up to 20 times (2 seconds)
 
   /**
    * Generate unique storage key for current route
@@ -50,8 +48,7 @@ const useScrollRestoration = (options = {}) => {
   };
 
   /**
-   * Wait for images to load before restoring scroll
-   * This prevents the "stops at CategoryPreview" bug
+   * Wait for all images to load
    */
   const waitForImages = () => {
     return new Promise((resolve) => {
@@ -65,7 +62,7 @@ const useScrollRestoration = (options = {}) => {
       let loadedCount = 0;
       const totalImages = images.length;
 
-      const checkAllLoaded = () => {
+      const checkComplete = () => {
         loadedCount++;
         if (loadedCount >= totalImages) {
           resolve();
@@ -73,29 +70,63 @@ const useScrollRestoration = (options = {}) => {
       };
 
       images.forEach((img) => {
-        if (img.complete) {
-          checkAllLoaded();
+        if (img.complete && img.naturalHeight !== 0) {
+          checkComplete();
         } else {
-          img.addEventListener('load', checkAllLoaded, { once: true });
-          img.addEventListener('error', checkAllLoaded, { once: true });
+          img.addEventListener('load', checkComplete, { once: true });
+          img.addEventListener('error', checkComplete, { once: true });
         }
       });
 
-      // Fallback timeout - don't wait forever
+      // Safety timeout
+      setTimeout(resolve, 1500);
+    });
+  };
+
+  /**
+   * Wait for layout to stabilize
+   * This is the KEY fix - waits for browser to finish painting
+   */
+  const waitForLayoutStability = () => {
+    return new Promise((resolve) => {
+      let lastHeight = document.documentElement.scrollHeight;
+      let stableCount = 0;
+      const checksNeeded = 3; // Height must be stable for 3 checks
+      
+      const checkStability = () => {
+        const currentHeight = document.documentElement.scrollHeight;
+        
+        if (currentHeight === lastHeight) {
+          stableCount++;
+          if (stableCount >= checksNeeded) {
+            resolve();
+            return;
+          }
+        } else {
+          stableCount = 0;
+          lastHeight = currentHeight;
+        }
+        
+        requestAnimationFrame(checkStability);
+      };
+      
+      requestAnimationFrame(checkStability);
+      
+      // Maximum wait time
       setTimeout(resolve, 2000);
     });
   };
 
   /**
-   * Restore scroll position with retry mechanism
-   * Keeps trying until page height is sufficient or max attempts reached
+   * Restore scroll position with proper sequencing
    */
   const restoreScrollPosition = async () => {
     if (!enabled || hasRestoredRef.current) return;
 
     const savedData = sessionStorage.getItem(getStorageKey());
+    
     if (!savedData) {
-      // First visit - ensure we're at top
+      // First visit - scroll to top
       window.scrollTo(0, 0);
       return;
     }
@@ -103,52 +134,39 @@ const useScrollRestoration = (options = {}) => {
     try {
       const { x, y } = JSON.parse(savedData);
       
-      // Mark as restoring to prevent save during restoration
       isRestoringRef.current = true;
       hasRestoredRef.current = true;
 
-      // Wait for initial render
+      // Step 1: Wait for images to load
+      await waitForImages();
+      
+      // Step 2: Wait for layout to stabilize (CRITICAL for BentoGrid)
+      await waitForLayoutStability();
+      
+      // Step 3: One more frame to ensure paint is complete
       await new Promise(resolve => requestAnimationFrame(resolve));
       
-      // Wait for images to load
-      await waitForImages();
-
-      // Retry mechanism - wait for page to be tall enough
-      const attemptRestore = () => {
-        const docHeight = document.documentElement.scrollHeight;
-        const windowHeight = window.innerHeight;
-        const maxScrollY = docHeight - windowHeight;
-        
-        // If page is tall enough OR we've tried enough times, restore now
-        if (maxScrollY >= y || restoreAttemptRef.current >= maxAttemptsRef.current) {
-          const targetY = Math.min(y, Math.max(0, maxScrollY));
-          
-          // Instant scroll (no smooth animation)
-          window.scrollTo(x, targetY);
-          
-          // Allow saving again after restoration completes
-          setTimeout(() => {
-            isRestoringRef.current = false;
-          }, 100);
-        } else {
-          // Page not tall enough yet, try again
-          restoreAttemptRef.current++;
-          setTimeout(attemptRestore, 100);
-        }
-      };
-
-      attemptRestore();
+      // Step 4: Verify we have enough height
+      const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+      const targetY = Math.min(y, Math.max(0, maxScrollY));
+      
+      // Step 5: Restore instantly (no smooth scroll)
+      window.scrollTo(x, targetY);
+      
+      // Allow saving after brief delay
+      setTimeout(() => {
+        isRestoringRef.current = false;
+      }, 150);
       
     } catch (e) {
       console.warn('Failed to restore scroll position:', e);
       isRestoringRef.current = false;
-      // Ensure first visit starts at top
       window.scrollTo(0, 0);
     }
   };
 
   /**
-   * Step 1: Disable browser's native scroll restoration
+   * Disable browser's native scroll restoration
    */
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -161,18 +179,21 @@ const useScrollRestoration = (options = {}) => {
   }, []);
 
   /**
-   * Step 2: Restore scroll position on mount (layout effect for no flicker)
+   * Restore scroll on route change
    */
   useLayoutEffect(() => {
-    // Reset flags on route change
     hasRestoredRef.current = false;
-    restoreAttemptRef.current = 0;
     
-    restoreScrollPosition();
+    // Small delay to let React finish rendering
+    const timer = setTimeout(() => {
+      restoreScrollPosition();
+    }, 0);
+    
+    return () => clearTimeout(timer);
   }, [location.pathname, location.search]);
 
   /**
-   * Step 3: Save scroll position on scroll (debounced)
+   * Save scroll position on scroll
    */
   useEffect(() => {
     if (!enabled) return;
@@ -194,7 +215,6 @@ const useScrollRestoration = (options = {}) => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
-      // Final save on unmount
       saveScrollPosition();
     };
   }, [enabled, debounceMs, location.pathname, location.search]);

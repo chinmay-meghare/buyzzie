@@ -122,8 +122,8 @@ const BentoGrid = ({ title, subtitle }) => {
                                 {/* Gradient Overlay for depth and readability */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10 transition-opacity duration-500 group-hover:opacity-90" />
 
-                                {/* Category Image */}
-                                <div className="absolute inset-0 z-0 bg-gray-800">
+                                {/* Category Image - EAGER loading for scroll restoration accuracy */}
+                                <div className="absolute inset-0 z-0">
                                     <img
                                         src={category.image}
                                         alt={category.name}
@@ -131,7 +131,6 @@ const BentoGrid = ({ title, subtitle }) => {
                                         draggable="false"
                                         loading="eager"
                                         fetchPriority="high"
-                                        style={{ minHeight: '280px' }}
                                     />
                                 </div>
 
