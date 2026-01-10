@@ -14,6 +14,7 @@ import { ArrowRight } from "lucide-react";
  * - Redux integration for seamless filter management
  * - Smooth hover animations and micro-interactions
  * - Fully responsive across mobile, tablet, and desktop
+ * - Optimized for scroll restoration (eager loading, fixed heights)
  * 
  * @param {Object} props
  * @param {string} props.title - Main heading text for the section
@@ -122,13 +123,15 @@ const BentoGrid = ({ title, subtitle }) => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10 transition-opacity duration-500 group-hover:opacity-90" />
 
                                 {/* Category Image */}
-                                <div className="absolute inset-0 z-0">
+                                <div className="absolute inset-0 z-0 bg-gray-800">
                                     <img
                                         src={category.image}
                                         alt={category.name}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                         draggable="false"
-                                        loading="lazy"
+                                        loading="eager"
+                                        fetchPriority="high"
+                                        style={{ minHeight: '280px' }}
                                     />
                                 </div>
 

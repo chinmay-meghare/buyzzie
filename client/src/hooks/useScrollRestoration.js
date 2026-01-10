@@ -1,243 +1,208 @@
-import { useEffect, useLayoutEffect, useRef, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 /**
- * Advanced Layout-Aware Scroll Restoration Hook
+ * Production-Ready Scroll Restoration Hook
  * 
- * Solves:
- * - "Flash" or "Overshoot" when navigating back
- * - Mobile viewport resize quirks
- * - Layout instability during data loading
- * 
- * Architecture:
- * 1. Blocks restoration initially using 'manual' history
- * 2. Monitors layout stability via ResizeObserver on #root or container
- * 3. Waits for height to settle (150-300ms window)
- * 4. Restores scroll position only when layout is stable
- * 5. Prevents overshoot by checking height post-restoration
+ * Handles:
+ * - Image loading delays (BentoGrid, lazy images, etc.)
+ * - Dynamic content height changes
+ * - Instant restoration without visual flash
+ * - Works with any layout structure
  */
 const useScrollRestoration = (options = {}) => {
   const { 
-    smooth = true, 
-    debounceMs = 150, // Increased default as requested
-    dependencies = [],
-    scrollContainerRef = null,
-    layoutContainerRef = null, // Ref for the element to observe for height changes
+    debounceMs = 150,
     enabled = true
   } = options;
 
   const location = useLocation();
-  const scrollTimeoutRef = useRef(null);
-  const stabilityTimerRef = useRef(null);
-  const restorationPendingRef = useRef(false);
-  const lastKnownHeightRef = useRef(0);
-  const resizeObserverRef = useRef(null);
-  
-  // Track current scroll position for saving
-  const currentScrollRef = useRef({ x: 0, y: 0 });
+  const saveTimeoutRef = useRef(null);
+  const isRestoringRef = useRef(false);
+  const hasRestoredRef = useRef(false);
+  const restoreAttemptRef = useRef(0);
+  const maxAttemptsRef = useRef(20); // Try up to 20 times (2 seconds)
 
   /**
-   * Helper: Get the scroll container (window or custom)
+   * Generate unique storage key for current route
    */
-  const getScrollContainer = useCallback(() => {
-    return scrollContainerRef?.current || window;
-  }, [scrollContainerRef]);
+  const getStorageKey = () => {
+    return `scroll_${location.pathname}${location.search}`;
+  };
 
   /**
-   * Helper: Get the element to observe for layout stability
-   * Defaults to #root for window scrolling, or the scroll container's content
+   * Save current scroll position to sessionStorage (debounced)
    */
-  const getLayoutTarget = useCallback(() => {
-    if (layoutContainerRef?.current) return layoutContainerRef.current;
-    
-    // If scrolling window, watch the app root
-    if (!scrollContainerRef?.current) {
-      return document.getElementById('root') || document.body;
+  const saveScrollPosition = () => {
+    if (!enabled || isRestoringRef.current) return;
+
+    const position = {
+      x: window.scrollX,
+      y: window.scrollY,
+      timestamp: Date.now()
+    };
+
+    try {
+      sessionStorage.setItem(getStorageKey(), JSON.stringify(position));
+    } catch (e) {
+      console.warn('Failed to save scroll position:', e);
     }
-    
-    // If custom scroll container, watch its first child (content wrapper)
-    // or the container itself if no children (fallback)
-    return scrollContainerRef.current.firstElementChild || scrollContainerRef.current;
-  }, [layoutContainerRef, scrollContainerRef]);
+  };
 
   /**
-   * Helper: Get unique key for storage
+   * Wait for images to load before restoring scroll
+   * This prevents the "stops at CategoryPreview" bug
    */
-  const getScrollKey = useCallback(() => {
-    return `scroll_position_${location.pathname}${location.search}`;
-  }, [location.pathname, location.search]);
+  const waitForImages = () => {
+    return new Promise((resolve) => {
+      const images = document.querySelectorAll('img');
+      
+      if (images.length === 0) {
+        resolve();
+        return;
+      }
+
+      let loadedCount = 0;
+      const totalImages = images.length;
+
+      const checkAllLoaded = () => {
+        loadedCount++;
+        if (loadedCount >= totalImages) {
+          resolve();
+        }
+      };
+
+      images.forEach((img) => {
+        if (img.complete) {
+          checkAllLoaded();
+        } else {
+          img.addEventListener('load', checkAllLoaded, { once: true });
+          img.addEventListener('error', checkAllLoaded, { once: true });
+        }
+      });
+
+      // Fallback timeout - don't wait forever
+      setTimeout(resolve, 2000);
+    });
+  };
 
   /**
-   * 1️⃣ Initialization: Set manual history restoration
+   * Restore scroll position with retry mechanism
+   * Keeps trying until page height is sufficient or max attempts reached
+   */
+  const restoreScrollPosition = async () => {
+    if (!enabled || hasRestoredRef.current) return;
+
+    const savedData = sessionStorage.getItem(getStorageKey());
+    if (!savedData) {
+      // First visit - ensure we're at top
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    try {
+      const { x, y } = JSON.parse(savedData);
+      
+      // Mark as restoring to prevent save during restoration
+      isRestoringRef.current = true;
+      hasRestoredRef.current = true;
+
+      // Wait for initial render
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      
+      // Wait for images to load
+      await waitForImages();
+
+      // Retry mechanism - wait for page to be tall enough
+      const attemptRestore = () => {
+        const docHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const maxScrollY = docHeight - windowHeight;
+        
+        // If page is tall enough OR we've tried enough times, restore now
+        if (maxScrollY >= y || restoreAttemptRef.current >= maxAttemptsRef.current) {
+          const targetY = Math.min(y, Math.max(0, maxScrollY));
+          
+          // Instant scroll (no smooth animation)
+          window.scrollTo(x, targetY);
+          
+          // Allow saving again after restoration completes
+          setTimeout(() => {
+            isRestoringRef.current = false;
+          }, 100);
+        } else {
+          // Page not tall enough yet, try again
+          restoreAttemptRef.current++;
+          setTimeout(attemptRestore, 100);
+        }
+      };
+
+      attemptRestore();
+      
+    } catch (e) {
+      console.warn('Failed to restore scroll position:', e);
+      isRestoringRef.current = false;
+      // Ensure first visit starts at top
+      window.scrollTo(0, 0);
+    }
+  };
+
+  /**
+   * Step 1: Disable browser's native scroll restoration
    */
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
       const original = window.history.scrollRestoration;
       window.history.scrollRestoration = 'manual';
-      return () => { window.history.scrollRestoration = original; };
+      return () => {
+        window.history.scrollRestoration = original;
+      };
     }
   }, []);
 
   /**
-   * 2️⃣ Saving Loop: Debounced save to sessionStorage
+   * Step 2: Restore scroll position on mount (layout effect for no flicker)
    */
-  const saveScrollPosition = useCallback(() => {
-    if (!enabled) return;
+  useLayoutEffect(() => {
+    // Reset flags on route change
+    hasRestoredRef.current = false;
+    restoreAttemptRef.current = 0;
+    
+    restoreScrollPosition();
+  }, [location.pathname, location.search]);
 
-    const container = getScrollContainer();
-    const position = container === window 
-      ? { x: window.scrollX, y: window.scrollY }
-      : { x: container.scrollLeft, y: container.scrollTop };
-
-    // Update ref immediately
-    currentScrollRef.current = position;
-
-    // Persist to storage
-    const key = getScrollKey();
-    const data = {
-      x: position.x,
-      y: position.y,
-      timestamp: Date.now(),
-      pathname: location.pathname
-    };
-
-    try {
-      sessionStorage.setItem(key, JSON.stringify(data));
-    } catch (e) {
-      // Sliently handle quota errors
-      console.warn('Scroll save failed', e);
-    }
-  }, [enabled, getScrollContainer, getScrollKey, location.pathname]);
-
-  // Attach scroll listener
+  /**
+   * Step 3: Save scroll position on scroll (debounced)
+   */
   useEffect(() => {
     if (!enabled) return;
-    const container = getScrollContainer();
-    
+
     const handleScroll = () => {
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-      scrollTimeoutRef.current = setTimeout(saveScrollPosition, debounceMs);
-    };
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-      saveScrollPosition(); // Final save
-    };
-  }, [enabled, getScrollContainer, debounceMs, saveScrollPosition]);
-
-  /**
-   * 3️⃣ Restoration Core: Restore only when layout is stable
-   */
-  const performRestoration = useCallback((targetY, targetX) => {
-    const container = getScrollContainer();
-    const isMobile = window.innerWidth < 768; // Simple mobile check
-
-    // Final stability check before scrolling
-    // If we are forcing a scroll, we might want to disable smooth scroll 
-    // if the jump is massive to avoid "flying" over content, BUT user requested smooth.
-    // However, for correction (overshoot fix), we usually want instant.
-    
-    const scrollOptions = {
-      top: targetY,
-      left: targetX,
-      behavior: smooth ? 'smooth' : 'auto'
-    };
-
-    if (container === window) {
-      window.scrollTo(scrollOptions);
-    } else {
-      container.scrollTo(scrollOptions);
-    }
-    
-    restorationPendingRef.current = false;
-  }, [getScrollContainer, smooth]);
-
-  /**
-   * 4️⃣ Layout Stability Monitor
-   */
-  useEffect(() => {
-    if (!enabled) return;
-
-    const layoutTarget = getLayoutTarget();
-    if (!layoutTarget) return;
-
-    // Check if we need to restore
-    const key = getScrollKey();
-    const saved = sessionStorage.getItem(key);
-    let targetPos = null;
-
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.pathname === location.pathname) {
-          targetPos = parsed;
-          restorationPendingRef.current = true;
-          
-          // Initial check: if page is already tall enough, maybe restore? 
-          // But better to wait for stability as requested.
-        }
-      } catch (e) { /* ignore */ }
-    }
-
-    if (!targetPos) return;
-
-    // Stability thresholds based on device
-    const isMobile = window.innerWidth < 768;
-    const stabilityWindow = isMobile ? 300 : 150; // ms to wait for no changes
-
-    const onLayoutChange = () => {
-      // Reset timer whenever layout changes
-      if (stabilityTimerRef.current) clearTimeout(stabilityTimerRef.current);
-
-      if (!restorationPendingRef.current) {
-        // 5️⃣ Silent Correction / Overshoot Prevention
-        // If layout changes AFTER we restored, we might need to hold position
-        // This prevents the "scroll back up" if content loads above
-        // TODO: This is aggressive, use only if strictly needed. 
-        // For now, we focus on the initial stable restore.
-        return;
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
       }
       
-      stabilityTimerRef.current = setTimeout(() => {
-        // Layout has been stable for 'stabilityWindow' ms
-        const currentHeight = layoutTarget.scrollHeight || layoutTarget.clientHeight;
-        
-        // Only restore if we have enough height to scroll to
-        // or if it's the best we can do
-        performRestoration(targetPos.y, targetPos.x);
-        
-      }, stabilityWindow);
+      saveTimeoutRef.current = setTimeout(() => {
+        saveScrollPosition();
+      }, debounceMs);
     };
 
-    // Observer setup
-    resizeObserverRef.current = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-         // Determine height (handling both window/body and explicit containers)
-         const height = entry.contentRect.height;
-         
-         if (Math.abs(height - lastKnownHeightRef.current) > 10) {
-           lastKnownHeightRef.current = height;
-           onLayoutChange();
-         }
-      }
-    });
-
-    resizeObserverRef.current.observe(layoutTarget);
-
-    // Initial trigger in case layout doesn't change initially (static page)
-    onLayoutChange();
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      if (resizeObserverRef.current) resizeObserverRef.current.disconnect();
-      if (stabilityTimerRef.current) clearTimeout(stabilityTimerRef.current);
+      window.removeEventListener('scroll', handleScroll);
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      // Final save on unmount
+      saveScrollPosition();
     };
-  }, [enabled, getLayoutTarget, getScrollKey, performRestoration, location.pathname, ...dependencies]);
+  }, [enabled, debounceMs, location.pathname, location.search]);
 
   return {
-    saveScrollPosition,
-    clearScrollPosition: () => sessionStorage.removeItem(getScrollKey()),
+    clearScrollPosition: () => {
+      sessionStorage.removeItem(getStorageKey());
+    }
   };
 };
 

@@ -7,11 +7,8 @@ import SubscribeSection from "../components/layout/SubscribeSection";
 import useScrollRestoration from "../hooks/useScrollRestoration";
 
 function Home() {
-  // Persist and restore scroll position with smooth transitions
-  useScrollRestoration({
-    smooth: true,
-    debounceMs: 200
-  });
+  useScrollRestoration();
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <Hero />
