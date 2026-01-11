@@ -94,8 +94,7 @@ const ProductCard = ({ product }) => {
               src={product.images[0]}
               alt={product.title}
               className="w-full h-48 object-cover"
-              loading="eager"
-              fetchPriority="high"
+              loading="lazy"
               onError={(e) => {
                 e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
               }}
