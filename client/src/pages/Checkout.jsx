@@ -11,8 +11,11 @@ import { createOrder } from "../features/orders/orderSlice";
 import ShippingForm from "../components/checkout/ShippingForm";
 import PaymentMethodSelector from "../components/checkout/PaymentMethodSelector";
 import OrderSummary from "../components/checkout/OrderSummary";
+import useScrollRestoration from "../hooks/useScrollRestoration";
 
 const Checkout = () => {
+  useScrollRestoration();
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

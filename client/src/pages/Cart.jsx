@@ -14,8 +14,11 @@ import {
   clearCart,
 } from "../features/cart/cartSlice";
 import { isUserAuthenticated } from "../features/cart/cartUtils";
+import useScrollRestoration from "../hooks/useScrollRestoration";
 
 const Cart = () => {
+  useScrollRestoration();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector(selectCartItems);

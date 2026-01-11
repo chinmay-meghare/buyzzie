@@ -20,8 +20,11 @@ import {
   fetchOrderById,
   clearError,
 } from "../features/orders/orderSlice";
+import useScrollRestoration from "../hooks/useScrollRestoration";
 
 const OrderConfirmation = () => {
+
+  useScrollRestoration();
   const { orderId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();

@@ -12,6 +12,7 @@ import PersonalInfoTab from '../components/profile/PersonalInfoTab';
 import AddressesTab from '../components/profile/AddressesTab';
 import SecurityTab from '../components/profile/SecurityTab';
 import OrderHistoryTab from '../components/profile/OrderHistoryTab';
+import useScrollRestoration from '../hooks/useScrollRestoration';
 
 const TABS = [
   { id: 'personal', label: 'Personal Info', icon: 'user' },
@@ -21,6 +22,7 @@ const TABS = [
 ];
 
 const Profile = () => {
+  useScrollRestoration();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

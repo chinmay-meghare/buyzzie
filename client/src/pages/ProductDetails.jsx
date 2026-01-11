@@ -4,8 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById } from "../features/products/productSlice";
 import { addToCart, selectCartError, clearError } from "../features/cart/cartSlice";
 import { isUserAuthenticated } from "../features/cart/cartUtils";
+import useScrollRestoration from "../hooks/useScrollRestoration";
 
 const ProductDetails = () => {
+  useScrollRestoration();
   const { productId: productIdStr } = useParams();
   const productId = parseInt(productIdStr, 10);
   const dispatch = useDispatch();
