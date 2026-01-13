@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { fetchProductById } from "../features/products/productSlice";
 import { addToCart, selectCartError, clearError } from "../features/cart/cartSlice";
 import { isUserAuthenticated } from "../features/cart/cartUtils";
@@ -18,7 +19,6 @@ const ProductDetails = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [addToCartLoading, setAddToCartLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     dispatch(fetchProductById(productId));
@@ -38,20 +38,13 @@ const ProductDetails = () => {
     }
   }, [product, selectedSize, selectedColor]);
 
-  // Show notification and clear it after 3 seconds
-  useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => {
-        setNotification(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [notification]);
+
+
 
   // Show cart error notification
   useEffect(() => {
     if (cartError) {
-      setNotification({ type: 'error', message: cartError });
+      toast.error(cartError);
       dispatch(clearError());
     }
   }, [cartError, dispatch]);
@@ -67,13 +60,13 @@ const ProductDetails = () => {
 
       // Validate product exists
       if (!product) {
-        setNotification({ type: 'error', message: 'Product not available' });
+        toast.error('Product not available');
         return;
       }
 
       // Validate stock availability
       if (product.stock < 1) {
-        setNotification({ type: 'error', message: 'Product is out of stock' });
+        toast.error('Product is out of stock');
         return;
       }
 
@@ -90,10 +83,7 @@ const ProductDetails = () => {
       );
 
       // Show success notification
-      setNotification({
-        type: 'success',
-        message: 'Product added to cart successfully!',
-      });
+      toast.success('Product added to cart successfully!');
 
       console.log('Product added to cart:', {
         productId: product.id,
@@ -102,10 +92,7 @@ const ProductDetails = () => {
       });
     } catch (error) {
       console.error('Error adding to cart:', error);
-      setNotification({
-        type: 'error',
-        message: 'Failed to add product to cart. Please try again.',
-      });
+      toast.error('Failed to add product to cart. Please try again.');
     } finally {
       setAddToCartLoading(false);
     }
@@ -137,18 +124,6 @@ const ProductDetails = () => {
 
   return (
     <div className="bg-gray-900 text-white min-h-screen p-8">
-      {/* Notification Banner */}
-      {notification && (
-        <div
-          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
-            notification.type === 'success'
-              ? 'bg-green-600 text-white'
-              : 'bg-red-600 text-white'
-          }`}
-        >
-          {notification.message}
-        </div>
-      )}
 
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -164,9 +139,8 @@ const ProductDetails = () => {
                   key={index}
                   src={image}
                   alt={`${product.title} ${index + 1}`}
-                  className={`w-full rounded-lg cursor-pointer ${
-                    selectedImage === index ? "border-2 border-indigo-500" : ""
-                  }`}
+                  className={`w-full rounded-lg cursor-pointer ${selectedImage === index ? "border-2 border-indigo-500" : ""
+                    }`}
                   onClick={() => setSelectedImage(index)}
                 />
               ))}
@@ -179,11 +153,10 @@ const ProductDetails = () => {
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
-                    className={`w-5 h-5 ${
-                      i < Math.round(product.rating)
-                        ? "text-yellow-400"
-                        : "text-gray-600"
-                    }`}
+                    className={`w-5 h-5 ${i < Math.round(product.rating)
+                      ? "text-yellow-400"
+                      : "text-gray-600"
+                      }`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -214,11 +187,10 @@ const ProductDetails = () => {
                     <button
                       key={index}
                       onClick={() => setSelectedColor(color)}
-                      className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
-                        selectedColor === color
-                          ? "bg-indigo-600 border-indigo-400 text-white"
-                          : "bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600"
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-sm border transition-colors ${selectedColor === color
+                        ? "bg-indigo-600 border-indigo-400 text-white"
+                        : "bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600"
+                        }`}
                     >
                       {color}
                     </button>
@@ -236,11 +208,10 @@ const ProductDetails = () => {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`w-12 h-12 border rounded-lg transition-colors ${
-                        selectedSize === size
-                          ? "bg-indigo-600 border-indigo-400 text-white"
-                          : "border-gray-600 text-gray-300 hover:bg-gray-700"
-                      }`}
+                      className={`w-12 h-12 border rounded-lg transition-colors ${selectedSize === size
+                        ? "bg-indigo-600 border-indigo-400 text-white"
+                        : "border-gray-600 text-gray-300 hover:bg-gray-700"
+                        }`}
                     >
                       {size}
                     </button>
@@ -253,19 +224,18 @@ const ProductDetails = () => {
             <button
               onClick={handleAddToCart}
               disabled={addToCartLoading || product.stock < 1}
-              className={`w-full py-3 rounded-lg font-semibold transition-colors ${
-                product.stock < 1
-                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                  : addToCartLoading
+              className={`w-full py-3 rounded-lg font-semibold transition-colors ${product.stock < 1
+                ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                : addToCartLoading
                   ? "bg-indigo-500 text-white cursor-wait"
                   : "bg-indigo-600 text-white hover:bg-indigo-700"
-              }`}
+                }`}
             >
               {addToCartLoading
                 ? "Adding to Cart..."
                 : product.stock < 1
-                ? "Out of Stock"
-                : "Add to Cart"}
+                  ? "Out of Stock"
+                  : "Add to Cart"}
             </button>
 
             <div className="mt-6 text-sm text-gray-400">

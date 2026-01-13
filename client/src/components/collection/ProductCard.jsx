@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import { addToCart } from "../../features/cart/cartSlice";
 import { isUserAuthenticated } from "../../features/cart/cartUtils";
 
@@ -8,17 +9,7 @@ const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
-  const [notification, setNotification] = useState(null);
 
-  // Clear notification after 3 seconds
-  useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => {
-        setNotification(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [notification]);
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
@@ -34,12 +25,13 @@ const ProductCard = ({ product }) => {
 
       // Validate product exists and has stock
       if (!product) {
-        setNotification({ type: 'error', message: 'Product not available' });
+        toast.error('Product not available');
         return;
       }
 
+
       if (product.stock < 1) {
-        setNotification({ type: 'error', message: 'Product is out of stock' });
+        toast.error('Product is out of stock');
         return;
       }
 
@@ -55,18 +47,12 @@ const ProductCard = ({ product }) => {
         })
       );
 
-      setNotification({
-        type: 'success',
-        message: 'Added to cart!',
-      });
+      toast.success('Product added to cart');
 
       console.log('Product added to cart from card:', product.id);
     } catch (error) {
       console.error('Error adding to cart:', error);
-      setNotification({
-        type: 'error',
-        message: 'Failed to add to cart',
-      });
+      toast.error('Failed to add to cart');
     } finally {
       setIsAdding(false);
     }
@@ -74,19 +60,8 @@ const ProductCard = ({ product }) => {
 
   return (
     <>
-      {/* Notification Banner */}
-      {notification && (
-        <div
-          className={`fixed top-4 right-4 p-3 rounded-lg shadow-lg text-sm z-50 ${
-            notification.type === 'success'
-              ? 'bg-green-600 text-white'
-              : 'bg-red-600 text-white'
-          }`}
-        >
-          {notification.message}
-        </div>
-      )}
-      
+
+
       <div className="bg-gray-900 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
         <Link to={`/product/${product.id}`}>
           <div className="relative">
@@ -104,31 +79,30 @@ const ProductCard = ({ product }) => {
             </div>
           </div>
         </Link>
-        
+
         <div className="p-4">
           <Link to={`/product/${product.id}`}>
             <h3 className="text-lg font-semibold text-gray-100 mb-2 hover:text-blue-600 transition-colors">
               {product.title}
             </h3>
           </Link>
-          
+
           <div className="flex items-center justify-between mb-3">
             <span className="text-xl font-bold text-green-600">
               ${product.price}
             </span>
             <span className="text-sm text-gray-500">{product.currency}</span>
           </div>
-          
+
           <button
             onClick={handleAddToCart}
             disabled={isAdding || product.stock < 1}
-            className={`w-full py-2 px-4 rounded-md transition-colors ${
-              product.stock < 1
-                ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                : isAdding
+            className={`w-full py-2 px-4 rounded-md transition-colors ${product.stock < 1
+              ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+              : isAdding
                 ? "bg-blue-500 text-white cursor-wait"
                 : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+              }`}
           >
             {isAdding ? "Adding..." : product.stock < 1 ? "Out of Stock" : "Add to Cart"}
           </button>
