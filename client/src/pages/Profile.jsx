@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { logout } from '../features/auth/authSlice';
 import {
   clearError,
@@ -25,13 +25,14 @@ const Profile = () => {
   useScrollRestoration();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Get user from auth state
   const user = useSelector((state) => state.auth.user);
   const error = useSelector(selectUserError);
   const successMessage = useSelector(selectUserSuccessMessage);
 
-  const [activeTab, setActiveTab] = useState('personal');
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'personal');
 
   // Redirect if not logged in
   useEffect(() => {
@@ -228,8 +229,8 @@ const Profile = () => {
                     type="button"
                     onClick={() => handleTabChange(tab.id)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-left font-medium transition-all ${activeTab === tab.id
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                       }`}
                     aria-current={activeTab === tab.id ? 'page' : undefined}
                   >

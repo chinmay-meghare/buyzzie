@@ -358,9 +358,8 @@ const OrderConfirmation = () => {
               }
             >
               <svg
-                className={`w-5 h-5 transform transition-transform duration-300 ${
-                  isOrderSummaryExpanded ? "rotate-180" : ""
-                }`}
+                className={`w-5 h-5 transform transition-transform duration-300 ${isOrderSummaryExpanded ? "rotate-180" : ""
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -377,9 +376,8 @@ const OrderConfirmation = () => {
 
           {/* Order Items List - Hidden on mobile when collapsed */}
           <div
-            className={`space-y-4 ${
-              isOrderSummaryExpanded ? "block" : "hidden"
-            } md:block`}
+            className={`space-y-4 ${isOrderSummaryExpanded ? "block" : "hidden"
+              } md:block`}
             aria-hidden={!isOrderSummaryExpanded}
           >
             {items.length === 0 ? (
@@ -499,7 +497,7 @@ const OrderConfirmation = () => {
             Continue Shopping
           </button>
           <button
-            onClick={() => navigate("/orders")}
+            onClick={() => navigate("/profile", { state: { activeTab: "orders" } })}
             className="flex-1 py-3 px-6 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors min-h-[44px]"
             aria-label="View all orders"
           >
