@@ -1,49 +1,37 @@
-import { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signup } from "../features/auth/authSlice";
 import { useNavigate, useLocation } from "react-router-dom";
+import useForm from "../hooks/useForm";
+import { isValidEmail, isNotEmpty, hasMinLength } from "../utils/validators";
 
 export default function Signup() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { error, status } = useSelector((s) => s.auth || {});
 
-  const validate = () => {
+  const validate = (values) => {
     const errs = {};
-    if (!form.name.trim()) errs.name = "Name is required";
-    if (!form.email.trim()) errs.email = "Email is required";
-    else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = "Invalid email";
-    if (!form.password) errs.password = "Password is required";
-    else if (form.password.length < 6)
+    if (!isNotEmpty(values.name)) errs.name = "Name is required";
+    if (!isNotEmpty(values.email)) errs.email = "Email is required";
+    else if (!isValidEmail(values.email)) errs.email = "Invalid email";
+
+    if (!isNotEmpty(values.password)) errs.password = "Password is required";
+    else if (!hasMinLength(values.password, 6))
       errs.password = "Password must be at least 6 characters";
-    if (form.confirmPassword !== form.password)
+
+    if (values.confirmPassword !== values.password)
       errs.confirmPassword = "Passwords do not match";
     return errs;
   };
 
-  const onChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: undefined });
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    const errs = validate();
-    setErrors(errs);
-    if (Object.keys(errs).length) return;
+  const signupUser = async (values) => {
     const result = await dispatch(
       signup({
-        name: form.name.trim(),
-        email: form.email.trim(),
-        password: form.password,
+        name: values.name.trim(),
+        email: values.email.trim(),
+        password: values.password,
       })
     );
     if (result.type === "auth/signup/fulfilled") {
@@ -51,11 +39,21 @@ export default function Signup() {
     }
   };
 
+  const { values: form, errors, handleChange: onChange, handleSubmit } = useForm(
+    {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validate
+  );
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <form
         className="bg-gray-800 p-8 rounded shadow-md w-full max-w-md"
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit(signupUser)}
       >
         <h2 className="text-2xl font-bold mb-6 text-white">Sign Up</h2>
         <div className="mb-4">
