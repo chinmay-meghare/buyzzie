@@ -37,6 +37,9 @@ function Navbar() {
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event) => {
+      // Prevent closing if mobile menu is open as it causes issues with interactions
+      if (mobileMenuOpen) return;
+
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
@@ -50,7 +53,7 @@ function Navbar() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [dropdownOpen]);
+  }, [dropdownOpen, mobileMenuOpen]);
 
   const handleUserClick = () => setDropdownOpen((prev) => !prev);
 
