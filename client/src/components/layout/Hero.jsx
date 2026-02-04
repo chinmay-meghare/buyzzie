@@ -43,12 +43,12 @@ function Hero() {
           </p>
           <div className="flex flex-row max-[500px]:flex-col gap-4 md:gap-6">
             <Link to="/collection">
-              <button className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-violet-400 text-white text-lg font-semibold px-6 md:px-8 py-3 rounded-full shadow-lg hover:scale-105 transition-transform">
+              <button className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-violet-400 text-white text-lg font-semibold px-6 md:px-6 py-2 rounded-full shadow-lg hover:scale-105 transition-transform">
                 Shop Now
               </button>
             </Link>
             <Link to="/collection">
-              <button className="w-full sm:w-auto border-2 border-white text-white text-lg font-semibold px-6 md:px-8 py-3 rounded-full hover:bg-white/10 transition">
+              <button className="w-full sm:w-auto border-2 border-white text-white text-lg font-semibold px-6 md:px-8 py-2 rounded-full hover:bg-white/10 transition">
                 Explore Categories
               </button>
             </Link>
