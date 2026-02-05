@@ -60,8 +60,6 @@ const ProductCard = ({ product }) => {
 
   return (
     <>
-
-
       <div className="bg-gray-900 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
         <Link to={`/product/${product.id}`}>
           <div className="relative">
