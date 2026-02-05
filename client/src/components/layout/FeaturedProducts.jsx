@@ -13,6 +13,16 @@ const FeaturedProducts = () => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
+  const productsArray = products || [];
+
+  const featuredProducts = React.useMemo(() => {
+    if (!productsArray.length) return [];
+
+    const shuffled = [...productsArray].sort(() => 0.5 - Math.random());
+
+    return shuffled.slice(0, 6);
+  }, [productsArray]);
+
   if (loading && (!products || products.length === 0)) {
     return (
       <section className="py-24">
@@ -56,16 +66,6 @@ const FeaturedProducts = () => {
       </>
     );
   }
-
-  const productsArray = products || [];
-
-  const featuredProducts = React.useMemo(() => {
-    if (!productsArray.length) return [];
-
-    const shuffled = [...productsArray].sort(() => 0.5 - Math.random());
-
-    return shuffled.slice(0, 6);
-  }, [productsArray]);
 
   return (
     <section className="py-24">
